@@ -164,6 +164,16 @@
 
 <section class="panel">
   <h2>📋 Student Complaints</h2>
+  <div style="margin-bottom:15px;">
+  <label for="statusFilter">Filter Complaints:</label>
+  <select id="statusFilter" onchange="renderComplaints()"
+    style="width:100%; padding:12px; margin-top:8px; background:#172033; color:white; border:1px solid #38bdf8; border-radius:8px;">
+    <option value="All">All Complaints</option>
+    <option value="Pending">Pending</option>
+    <option value="In Progress">In Progress</option>
+    <option value="Resolved">Resolved</option>
+  </select>
+  </div>
   <div id="complaintList">
     <p class="empty">No complaints yet.</p>
   </div>
