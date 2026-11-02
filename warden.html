@@ -234,6 +234,17 @@
       complaints.filter(c => c.status === "Resolved").length;
 
     list.innerHTML = "";
+    
+    const filter = document.getElementById("statusFilter").value;
+
+const filteredComplaints = filter === "All"
+  ? complaints
+  : complaints.filter(c => c.status === filter);
+
+if (filteredComplaints.length === 0) {
+  list.innerHTML = '<p class="empty">No complaints in this category.</p>';
+  return;
+}
 
     if (complaints.length === 0) {
       list.innerHTML = '<p class="empty">No complaints yet.</p>';
