@@ -91,6 +91,9 @@ function updateDashboard() {
   document.getElementById("pending").textContent =
     complaints.filter(c => c.status === "Pending").length;
 
+  document.getElementById("inProgress").textContent =
+    complaints.filter(c => c.status === "In Progress").length;
+
   document.getElementById("resolved").textContent =
     complaints.filter(c => c.status === "Resolved").length;
 }
