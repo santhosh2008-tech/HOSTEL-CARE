@@ -1,5 +1,193 @@
 
-/* Mobile responsive improvements */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0b1120;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #172033;
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid #263449;
+  margin-bottom: 25px;
+}
+
+.header h1 {
+  color: #38bdf8;
+  font-size: 27px;
+  margin-bottom: 10px;
+}
+
+.header h3 {
+  font-size: 14px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.profile {
+  background: #0284c7;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.welcome {
+  margin-bottom: 25px;
+}
+
+.welcome h2 {
+  margin-bottom: 8px;
+}
+
+.welcome p {
+  color: #94a3b8;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: #172033;
+  padding: 20px;
+  border-radius: 13px;
+  border: 1px solid #263449;
+}
+
+.stat-card:last-child {
+  grid-column: span 2;
+}
+
+.stat-card p {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.stat-card h2 {
+  color: #38bdf8;
+  font-size: 28px;
+  margin-top: 12px;
+}
+
+.panel {
+  background: #172033;
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid #263449;
+  margin-bottom: 20px;
+}
+
+.panel h3 {
+  color: #38bdf8;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin: 14px 0 8px;
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 14px;
+  background: #0f172a;
+  color: white;
+  border: 1px solid #334155;
+  border-radius: 9px;
+  font-size: 15px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 18px;
+  background: #0284c7;
+  color: white;
+  border: none;
+  border-radius: 9px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:active {
+  background: #0369a1;
+}
+
+footer {
+  text-align: center;
+  color: #64748b;
+  font-size: 12px;
+  padding: 20px;
+}
+
+input[type="file"] {
+  background: #172033;
+  padding: 12px;
+  margin-bottom: 12px;
+  color: #38bdf8;
+}
+
+#photoPreview img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+  border-radius: 12px;
+  margin-top: 12px;
+  border: 1px solid #38bdf8;
+}
+
+/* Complaint cards */
+
+.complaint {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  overflow-wrap: anywhere;
+}
+
+.complaint h3 {
+  color: #38bdf8;
+  margin-bottom: 12px;
+}
+
+.complaint p {
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+
+/* Mobile responsive design */
 
 @media (max-width: 480px) {
   body {
@@ -34,23 +222,4 @@
   input, select, textarea {
     font-size: 14px;
   }
-}
-
-.complaint {
-  background: #0f172a;
-  border: 1px solid #334155;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 15px;
-  overflow-wrap: anywhere;
-}
-
-.complaint h3 {
-  color: #38bdf8;
-  margin-bottom: 12px;
-}
-
-.complaint p {
-  color: #cbd5e1;
-  margin-bottom: 8px;
-}
+  }
