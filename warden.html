@@ -185,14 +185,14 @@
   const STORAGE_KEY = "hostelCareComplaints";
 
   function getComplaints() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      const data = saved ? JSON.parse(saved) : [];
-      return Array.isArray(data) ? data : [];
-    } catch (error) {
-      alert("Unable to load complaints.");
-      return [];
-    }
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const data = saved ? JSON.parse(saved) : [];
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    alert("Unable to load complaints.");
+    return [];
+  }
   }
 
   function saveComplaints(data) {
