@@ -1,18 +1,20 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" href="style.css">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HostelCare Dashboard</title>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HostelCare Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
-<script src="script.js"></script>
+<body>
 
 <header class="header">
   <div>
     <h1>HostelCare 🏠</h1>
-    <p>Hostel Complaint Management</p>
+    <h3>CMS College of Engineering and Technology</h3>
+    <p>Hostel Complaint Management System</p>
   </div>
   <div class="profile">S</div>
 </header>
@@ -47,12 +49,10 @@
   <form id="complaintForm">
 
     <label>Student Name</label>
-    <input id="student" type="text"
-    placeholder="Enter your name" required>
+    <input id="student" type="text" placeholder="Enter your name" required>
 
     <label>Room Number</label>
-    <input id="room" type="text"
-    placeholder="Enter room number" required>
+    <input id="room" type="text" placeholder="Enter room number" required>
 
     <label>Complaint Category</label>
     <select id="category" required>
@@ -64,43 +64,27 @@
       <option>Wi-Fi Problem</option>
       <option>Other</option>
     </select>
-      
-<label>Select Hostel</label>
-<select id="hostel" required>
-  <option value="">Choose Hostel</option>
-  <option>Boys Hostel</option>
-  <option>Girls Hostel</option>
-</select>
+
+    <label>Select Hostel</label>
+    <select id="hostel" required>
+      <option value="">Choose Hostel</option>
+      <option>Boys Hostel</option>
+      <option>Girls Hostel</option>
+    </select>
 
     <label>Describe your problem</label>
-    <textarea id="description"
-    placeholder="Explain your problem..."
-    rows="4" required></textarea>
+    <textarea id="description" placeholder="Explain your problem..." rows="4" required></textarea>
 
-<label>Attach Problem Photo</label>
+    <label>Attach Problem Photo</label>
+    <label for="galleryPhoto">🖼️ Choose from Gallery</label>
+    <input type="file" id="galleryPhoto" accept="image/*">
 
-<label for="galleryPhoto">🖼️ Choose from Gallery</label>
-<input
-  type="file"
-  id="galleryPhoto"
-  accept="image/*"
->
-
-<div id="photoPreview"></div>
+    <div id="photoPreview"></div>
 
     <button type="submit">Submit Complaint →</button>
 
   </form>
 </section>
-
-<header class="header">
-  <div>
-    <h1>HostelCare 🏠</h1>
-    <h3>CMS College of Engineering and Technology</h3>
-    <p>Hostel Complaint Management System</p>
-  </div>
-  <div class="profile">S</div>
-</header>
 
 <section class="panel">
   <h3>📋 My Complaints</h3>
@@ -110,16 +94,12 @@
 </section>
 
 <footer>
-  <p>HostelCare | CMS College of Engineering and Technology</p>
-</footer>
-
-<script src="script.js"></script>
-
-<footer>
   <p>HostelCare © 2026</p>
   <p>Made for a better hostel experience.</p>
 </footer>
 
+<script src="script.js"></script>
 </body>
-                        </html>
+</html>
+
                         
