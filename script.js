@@ -113,7 +113,7 @@ function showComplaints() {
     card.className = "complaint";
 
     const fields = [
-      ["h3", c.category],
+      ["h3", "Category: " + (c.category],
       ["p", "Complaint ID: " + c.id],
       ["p", "Student: " + c.name],
       ["p", "Room: " + c.room],
