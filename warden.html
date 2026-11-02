@@ -36,6 +36,7 @@
     header p {
       color: #94a3b8;
       font-size: 13px;
+      margin-top: 5px;
     }
 
     .stats {
@@ -102,7 +103,8 @@
       margin-top: 10px;
     }
 
-    .complaint select {
+    .complaint select,
+    #statusFilter {
       width: 100%;
       padding: 12px;
       background: #172033;
@@ -164,16 +166,18 @@
 
 <section class="panel">
   <h2>📋 Student Complaints</h2>
+
   <div style="margin-bottom:15px;">
-  <label for="statusFilter">Filter Complaints:</label>
-  <select id="statusFilter" onchange="renderComplaints()"
-    style="width:100%; padding:12px; margin-top:8px; background:#172033; color:white; border:1px solid #38bdf8; border-radius:8px;">
-    <option value="All">All Complaints</option>
-    <option value="Pending">Pending</option>
-    <option value="In Progress">In Progress</option>
-    <option value="Resolved">Resolved</option>
-  </select>
+    <label for="statusFilter">Filter Complaints:</label>
+
+    <select id="statusFilter" onchange="renderComplaints()">
+      <option value="All">All Complaints</option>
+      <option value="Pending">Pending</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Resolved">Resolved</option>
+    </select>
   </div>
+
   <div id="complaintList">
     <p class="empty">No complaints yet.</p>
   </div>
@@ -185,14 +189,14 @@
   const STORAGE_KEY = "hostelCareComplaints";
 
   function getComplaints() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const data = saved ? JSON.parse(saved) : [];
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-    alert("Unable to load complaints.");
-    return [];
-  }
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const data = saved ? JSON.parse(saved) : [];
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      alert("Unable to load complaints.");
+      return [];
+    }
   }
 
   function saveComplaints(data) {
@@ -228,23 +232,14 @@
     const list = document.getElementById("complaintList");
 
     document.getElementById("total").textContent = complaints.length;
+
     document.getElementById("pending").textContent =
       complaints.filter(c => c.status === "Pending").length;
+
     document.getElementById("resolved").textContent =
       complaints.filter(c => c.status === "Resolved").length;
 
     list.innerHTML = "";
-    
-    const filter = document.getElementById("statusFilter").value;
-
-const filteredComplaints = filter === "All"
-  ? complaints
-  : complaints.filter(c => c.status === filter);
-
-if (filteredComplaints.length === 0) {
-  list.innerHTML = '<p class="empty">No complaints in this category.</p>';
-  return;
-}
 
     if (complaints.length === 0) {
       list.innerHTML = '<p class="empty">No complaints yet.</p>';
@@ -253,16 +248,17 @@ if (filteredComplaints.length === 0) {
 
     const filter = document.getElementById("statusFilter").value;
 
-const filteredComplaints = filter === "All"
-  ? complaints
-  : complaints.filter(c => c.status === filter);
+    const filteredComplaints = filter === "All"
+      ? complaints
+      : complaints.filter(c => c.status === filter);
 
-if (filteredComplaints.length === 0) {
-  list.innerHTML = '<p class="empty">No complaints in this category.</p>';
-  return;
-}
+    if (filteredComplaints.length === 0) {
+      list.innerHTML =
+        '<p class="empty">No complaints in this category.</p>';
+      return;
+    }
 
-filteredComplaints.forEach(c => {
+    filteredComplaints.forEach(c => {
       const card = document.createElement("div");
       card.className = "complaint";
 
@@ -296,7 +292,11 @@ filteredComplaints.forEach(c => {
         const option = document.createElement("option");
         option.value = status;
         option.textContent = status;
-        if (status === c.status) option.selected = true;
+
+        if (status === c.status) {
+          option.selected = true;
+        }
+
         select.appendChild(option);
       });
 
