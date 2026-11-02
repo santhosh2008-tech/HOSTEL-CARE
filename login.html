@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HostelCare Login</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0b1120;
+      color: white;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 45px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #38bdf8;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: #172033;
+      border: 1px solid #263449;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 18px;
+    }
+
+    .card h2 {
+      margin-bottom: 10px;
+      color: #38bdf8;
+    }
+
+    .card p {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 9px;
+      background: #0284c7;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 15px;
+      background: #0f172a;
+      color: white;
+      border: 1px solid #334155;
+      border-radius: 9px;
+      font-size: 15px;
+    }
+
+    #wardenBox {
+      display: none;
+      margin-top: 15px;
+    }
+
+    #message {
+      color: #f87171;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    footer {
+      color: #64748b;
+      font-size: 12px;
+      margin-top: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="logo">🏠</div>
+  <h1>HostelCare</h1>
+
+  <p class="subtitle">
+    CMS College of Engineering and Technology<br>
+    Hostel Complaint Management System
+  </p>
+
+  <div class="card">
+    <h2>🎓 Student Login</h2>
+    <p>Submit and track your hostel complaints.</p>
+    <button onclick="studentLogin()">
+      Continue as Student →
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>🛡️ Warden Login</h2>
+    <p>Manage and monitor hostel complaints.</p>
+
+    <button onclick="showWardenLogin()">
+      Continue as Warden →
+    </button>
+
+    <div id="wardenBox">
+      <input
+        type="password"
+        id="wardenPassword"
+        placeholder="Enter Warden Password"
+      >
+
+      <button onclick="wardenLogin()">
+        Login →
+      </button>
+
+      <p id="message"></p>
+    </div>
+  </div>
+
+  <footer>
+    HostelCare © 2026
+  </footer>
+
+</div>
+
+<script>
+  function studentLogin() {
+    window.location.href = "index.html";
+  }
+
+  function showWardenLogin() {
+    document.getElementById("wardenBox").style.display = "block";
+  }
+
+  function wardenLogin() {
+    const password =
+      document.getElementById("wardenPassword").value;
+
+    if (password === "Hostel@123") {
+      window.location.href = "warden.html";
+    } else {
+      document.getElementById("message").textContent =
+        "Incorrect password. Try again!";
+    }
+  }
+</script>
+
+</body>
+</html>
