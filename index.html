@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HostelCare Dashboard</title>
+</head>
+
+<body>
+
+<header class="header">
+  <div>
+    <h1>HostelCare 🏠</h1>
+    <p>Hostel Complaint Management</p>
+  </div>
+  <div class="profile">S</div>
+</header>
+
+<section class="welcome">
+  <h2>Welcome, Student 👋</h2>
+  <p>Manage your hostel complaints easily.</p>
+</section>
+
+<section class="dashboard">
+
+  <div class="stat-card">
+    <p>Total Complaints</p>
+    <h2 id="total">0</h2>
+  </div>
+
+  <div class="stat-card">
+    <p>Pending Complaints</p>
+    <h2 id="pending">0</h2>
+  </div>
+
+  <div class="stat-card">
+    <p>Resolved Complaints</p>
+    <h2 id="resolved">0</h2>
+  </div>
+
+</section>
+
+<section class="panel">
+  <h3>➕ Submit a Complaint</h3>
+
+  <form id="complaintForm">
+
+    <label>Student Name</label>
+    <input id="student" type="text"
+    placeholder="Enter your name" required>
+
+    <label>Room Number</label>
+    <input id="room" type="text"
+    placeholder="Enter room number" required>
+
+    <label>Complaint Category</label>
+    <select id="category" required>
+      <option value="">Select category</option>
+      <option>Water Problem</option>
+      <option>Bathroom Problem</option>
+      <option>Electricity Problem</option>
+      <option>Food Problem</option>
+      <option>Wi-Fi Problem</option>
+      <option>Other</option>
+    </select>
+      
+<label>Select Hostel</label>
+<select id="hostel" required>
+  <option value="">Choose Hostel</option>
+  <option>Boys Hostel</option>
+  <option>Girls Hostel</option>
+</select>
+
+    <label>Describe your problem</label>
+    <textarea id="description"
+    placeholder="Explain your problem..."
+    rows="4" required></textarea>
+
+<label>Attach Problem Photo</label>
+
+<label for="galleryPhoto">🖼️ Choose from Gallery</label>
+<input
+  type="file"
+  id="galleryPhoto"
+  accept="image/*"
+>
+
+<div id="photoPreview"></div>
+
+    <button type="submit">Submit Complaint →</button>
+
+  </form>
+</section>
+
+<section class="panel">
+  <h3>📋 My Complaints</h3>
+  <div id="complaintList">
+    <p>No complaints yet.</p>
+  </div>
+</section>
+
+<header class="header">
+  <div>
+    <h1>HostelCare 🏠</h1>
+    <h3>CMS College of Engineering and Technology</h3>
+    <p>Hostel Complaint Management System</p>
+  </div>
+  <div class="profile">S</div>
+</header>
+
+<footer>
+  <p>HostelCare © 2026</p>
+  <p>Made for a better hostel experience.</p>
+</footer>
+
+</body>
+                        </html>
+                        
