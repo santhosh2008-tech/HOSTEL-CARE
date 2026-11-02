@@ -240,7 +240,18 @@
       return;
     }
 
-    complaints.forEach(c => {
+    const filter = document.getElementById("statusFilter").value;
+
+const filteredComplaints = filter === "All"
+  ? complaints
+  : complaints.filter(c => c.status === filter);
+
+if (filteredComplaints.length === 0) {
+  list.innerHTML = '<p class="empty">No complaints in this category.</p>';
+  return;
+}
+
+filteredComplaints.forEach(c => {
       const card = document.createElement("div");
       card.className = "complaint";
 
