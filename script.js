@@ -1,11 +1,5 @@
 
-let complaints = [];   
-try {
-  localStorage.removeItem("hostelCareComplaints");
-  alert("Old saved data cleared!");
-} catch (error) {
-  alert("HTML Creator storage access problem!");
-}
+let complaints = [];
 let selectedPhoto = "";
 
 const form = document.getElementById("complaintForm");
@@ -16,33 +10,33 @@ const preview = document.getElementById("photoPreview");
 function loadComplaints() {
   try {
     const saved = localStorage.getItem("hostelCareComplaints");
-    complaints = saved ? JSON.parse(saved) : [];
 
-    if (!Array.isArray(complaints)) {
-      complaints = [];
+    if (saved) {
+      const data = JSON.parse(saved);
+      complaints = Array.isArray(data) ? data : [];
     }
   } catch (error) {
     complaints = [];
-    alert("Unable to load saved complaints.");
+    alert("Unable to load saved complaints. Please check browser storage.");
   }
 }
 
 // Save complaints
 function saveComplaints() {
   try {
-    const textOnlyComplaints = complaints.map(c => ({
+    const savedData = complaints.map(c => ({
       ...c,
       photo: ""
     }));
 
     localStorage.setItem(
       "hostelCareComplaints",
-      JSON.stringify(textOnlyComplaints)
+      JSON.stringify(savedData)
     );
 
     return true;
   } catch (error) {
-    alert("Storage unavailable. Please check app storage.");
+    alert("Could not save data. Complaint will remain visible until page reload.");
     return false;
   }
 }
@@ -70,6 +64,9 @@ function handlePhoto(file) {
     const img = document.createElement("img");
     img.src = selectedPhoto;
     img.alt = "Complaint photo";
+    img.style.width = "100%";
+    img.style.maxHeight = "250px";
+    img.style.objectFit = "contain";
 
     preview.appendChild(img);
   };
@@ -81,14 +78,15 @@ function handlePhoto(file) {
   reader.readAsDataURL(file);
 }
 
-gallery.addEventListener("change", function () {
-  handlePhoto(this.files[0]);
-});
+if (gallery) {
+  gallery.addEventListener("change", function () {
+    handlePhoto(this.files[0]);
+  });
+}
 
 // Dashboard
 function updateDashboard() {
-  document.getElementById("total").textContent =
-    complaints.length;
+  document.getElementById("total").textContent = complaints.length;
 
   document.getElementById("pending").textContent =
     complaints.filter(c => c.status === "Pending").length;
@@ -141,8 +139,6 @@ function showComplaints() {
       img.style.width = "100%";
       img.style.maxHeight = "250px";
       img.style.objectFit = "contain";
-      img.style.marginTop = "12px";
-
       card.appendChild(img);
     }
 
@@ -151,56 +147,51 @@ function showComplaints() {
 }
 
 // Submit complaint
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
+if (form) {
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  const name = document.getElementById("student").value.trim();
-  const room = document.getElementById("room").value.trim();
-  const hostel = document.getElementById("hostel").value;
-  const category = document.getElementById("category").value;
-  const description =
-    document.getElementById("description").value.trim();
+    const name = document.getElementById("student").value.trim();
+    const room = document.getElementById("room").value.trim();
+    const hostel = document.getElementById("hostel").value;
+    const category = document.getElementById("category").value;
+    const description = document.getElementById("description").value.trim();
 
-  if (!name || !room || !hostel || !category || !description) {
-    alert("Please fill all details!");
-    return;
-  }
+    if (!name || !room || !hostel || !category || !description) {
+      alert("Please fill all details!");
+      return;
+    }
 
-  const now = new Date();
+    const now = new Date();
 
-  const complaint = {
-    id: "HC" + Date.now(),
-    name: name,
-    room: room,
-    hostel: hostel,
-    category: category,
-    description: description,
-    date: now.toLocaleDateString("en-IN"),
-    time: now.toLocaleTimeString("en-IN"),
-    status: "Pending",
-    photo: selectedPhoto
-  };
+    const complaint = {
+      id: "HC" + Date.now(),
+      name,
+      room,
+      hostel,
+      category,
+      description,
+      date: now.toLocaleDateString("en-IN"),
+      time: now.toLocaleTimeString("en-IN"),
+      status: "Pending",
+      photo: selectedPhoto
+    };
 
-  complaints.unshift(complaint);
+    complaints.unshift(complaint);
 
-  // Save before updating the page
-  if (!saveComplaints()) {
-    complaints.shift();
-    return;
-  }
+    saveComplaints();
+    showComplaints();
+    updateDashboard();
 
-  showComplaints();
-  updateDashboard();
+    form.reset();
+    selectedPhoto = "";
+    preview.innerHTML = "";
 
-  form.reset();
-  selectedPhoto = "";
-  preview.innerHTML = "";
-
-  alert("Complaint submitted successfully!");
-});
+    alert("Complaint submitted successfully!");
+  });
+}
 
 // Initial loading
 loadComplaints();
 showComplaints();
 updateDashboard();
-      
