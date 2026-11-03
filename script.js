@@ -2,6 +2,8 @@
 let complaints = [];
 let selectedPhoto = "";
 
+const STORAGE_KEY = "hostelCareComplaints";
+
 const form = document.getElementById("complaintForm");
 const gallery = document.getElementById("galleryPhoto");
 const preview = document.getElementById("photoPreview");
@@ -9,12 +11,10 @@ const preview = document.getElementById("photoPreview");
 // Load saved complaints
 function loadComplaints() {
   try {
-    const saved = localStorage.getItem("hostelCareComplaints");
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const data = saved ? JSON.parse(saved) : [];
 
-    if (saved) {
-      const data = JSON.parse(saved);
-      complaints = Array.isArray(data) ? data : [];
-    }
+    complaints = Array.isArray(data) ? data : [];
   } catch (error) {
     complaints = [];
     alert("Unable to load saved complaints. Please check browser storage.");
@@ -24,19 +24,20 @@ function loadComplaints() {
 // Save complaints
 function saveComplaints() {
   try {
+    // Photos are not stored to avoid filling browser storage.
     const savedData = complaints.map(c => ({
       ...c,
       photo: ""
     }));
 
     localStorage.setItem(
-      "hostelCareComplaints",
+      STORAGE_KEY,
       JSON.stringify(savedData)
     );
 
     return true;
   } catch (error) {
-    alert("Could not save data. Complaint will remain visible until page reload.");
+    alert("Could not save data. Please try again.");
     return false;
   }
 }
@@ -59,6 +60,9 @@ function handlePhoto(file) {
 
   reader.onload = function () {
     selectedPhoto = reader.result;
+
+    if (!preview) return;
+
     preview.innerHTML = "";
 
     const img = document.createElement("img");
@@ -86,21 +90,35 @@ if (gallery) {
 
 // Dashboard
 function updateDashboard() {
-  document.getElementById("total").textContent = complaints.length;
+  const total = document.getElementById("total");
+  const pending = document.getElementById("pending");
+  const inProgress = document.getElementById("inProgress");
+  const resolved = document.getElementById("resolved");
 
-  document.getElementById("pending").textContent =
-    complaints.filter(c => c.status === "Pending").length;
+  if (total) total.textContent = complaints.length;
 
-  document.getElementById("inProgress").textContent =
-    complaints.filter(c => c.status === "In Progress").length;
+  if (pending) {
+    pending.textContent =
+      complaints.filter(c => c.status === "Pending").length;
+  }
 
-  document.getElementById("resolved").textContent =
-    complaints.filter(c => c.status === "Resolved").length;
+  if (inProgress) {
+    inProgress.textContent =
+      complaints.filter(c => c.status === "In Progress").length;
+  }
+
+  if (resolved) {
+    resolved.textContent =
+      complaints.filter(c => c.status === "Resolved").length;
+  }
 }
 
 // Display complaints
 function showComplaints() {
   const list = document.getElementById("complaintList");
+
+  if (!list) return;
+
   list.innerHTML = "";
 
   if (complaints.length === 0) {
@@ -113,15 +131,15 @@ function showComplaints() {
     card.className = "complaint";
 
     const fields = [
-      ["h3", "Category: " + c.category],
-      ["p", "Complaint ID: " + c.id],
-      ["p", "Student: " + c.name],
-      ["p", "Room: " + c.room],
-      ["p", "Hostel: " + c.hostel],
-      ["p", "Problem: " + c.description],
-      ["p", "Date: " + c.date],
-      ["p", "Time: " + c.time],
-      ["p", "Status: " + c.status]
+      ["h3", "Category: " + (c.category || "Complaint")],
+      ["p", "Complaint ID: " + (c.id || "")],
+      ["p", "Student: " + (c.name || "")],
+      ["p", "Room: " + (c.room || "")],
+      ["p", "Hostel: " + (c.hostel || "")],
+      ["p", "Problem: " + (c.description || "")],
+      ["p", "Date: " + (c.date || "")],
+      ["p", "Time: " + (c.time || "")],
+      ["p", "Status: " + (c.status || "Pending")]
     ];
 
     fields.forEach(([tag, value]) => {
@@ -129,7 +147,11 @@ function showComplaints() {
       element.textContent = value;
 
       if (value === "Status: Pending") {
-        element.style.color = "#fbbf24";
+        element.style.color = "#ffbd45";
+      } else if (value === "Status: Resolved") {
+        element.style.color = "#4ade80";
+      } else if (value === "Status: In Progress") {
+        element.style.color = "#60a5fa";
       }
 
       card.appendChild(element);
@@ -142,6 +164,7 @@ function showComplaints() {
       img.style.width = "100%";
       img.style.maxHeight = "250px";
       img.style.objectFit = "contain";
+
       card.appendChild(img);
     }
 
@@ -182,13 +205,20 @@ if (form) {
 
     complaints.unshift(complaint);
 
-    saveComplaints();
+    if (!saveComplaints()) {
+      complaints.shift();
+      return;
+    }
+
     showComplaints();
     updateDashboard();
 
     form.reset();
     selectedPhoto = "";
-    preview.innerHTML = "";
+
+    if (preview) {
+      preview.innerHTML = "";
+    }
 
     alert("Complaint submitted successfully!");
   });
