@@ -1,55 +1,80 @@
 
+/* =================================
+   HOSTELCARE - PREMIUM RED & BLACK
+================================= */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+:root {
+  --red: #ff294f;
+  --red-dark: #a50025;
+  --black: #08080c;
+  --card: #171116;
+  --text: #ffffff;
+  --muted: #aaa0a5;
+}
+
 body {
-  background: #0b1120;
-  color: #ffffff;
+  background:
+    radial-gradient(circle at 10% 5%, #3b101b 0%, transparent 35%),
+    radial-gradient(circle at 90% 90%, #260b15 0%, transparent 35%),
+    var(--black);
+  color: var(--text);
   font-family: Arial, sans-serif;
   padding: 20px;
+  min-height: 100vh;
 }
+
+/* HEADER */
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #172033;
-  padding: 20px;
-  border-radius: 15px;
-  border: 1px solid #263449;
+  background: linear-gradient(145deg, #29131c, #100e12);
+  padding: 22px;
+  border-radius: 18px;
+  border: 1px solid #662033;
   margin-bottom: 25px;
+  box-shadow: 0 15px 35px #0009,
+              0 0 20px #ff294f18;
 }
 
 .header h1 {
-  color: #38bdf8;
+  color: var(--red);
   font-size: 27px;
   margin-bottom: 10px;
+  text-shadow: 0 0 15px #ff294f80;
 }
 
 .header h3 {
   font-size: 14px;
-  color: #ffffff;
+  color: white;
   margin-bottom: 8px;
 }
 
 .header p {
-  color: #94a3b8;
+  color: var(--muted);
   font-size: 12px;
 }
 
 .profile {
-  background: #0284c7;
-  width: 42px;
-  height: 42px;
+  background: linear-gradient(145deg, #ff526f, #97001f);
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  box-shadow: 0 0 20px #ff294f66;
 }
+
+/* WELCOME */
 
 .welcome {
   margin-bottom: 25px;
@@ -57,24 +82,38 @@ body {
 
 .welcome h2 {
   margin-bottom: 8px;
+  color: white;
 }
 
 .welcome p {
-  color: #94a3b8;
+  color: var(--muted);
 }
+
+/* DASHBOARD */
 
 .dashboard {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 15px;
   margin-bottom: 25px;
 }
 
 .stat-card {
-  background: #172033;
-  padding: 20px;
-  border-radius: 13px;
-  border: 1px solid #263449;
+  background: linear-gradient(145deg, #29151f, #111014);
+  padding: 22px;
+  border-radius: 16px;
+  border: 1px solid #632036;
+  box-shadow: 0 12px 25px #0008,
+              inset 0 1px 1px #ffffff12;
+  transition: 0.3s ease;
+  transform: perspective(800px) rotateX(2deg);
+}
+
+.stat-card:hover {
+  transform: perspective(800px) translateY(-6px);
+  border-color: var(--red);
+  box-shadow: 0 18px 35px #0009,
+              0 0 20px #ff294f35;
 }
 
 .stat-card:last-child {
@@ -82,80 +121,105 @@ body {
 }
 
 .stat-card p {
-  color: #94a3b8;
+  color: var(--muted);
   font-size: 13px;
 }
 
 .stat-card h2 {
-  color: #38bdf8;
-  font-size: 28px;
+  color: var(--red);
+  font-size: 30px;
   margin-top: 12px;
+  text-shadow: 0 0 15px #ff294f66;
 }
 
+/* PANELS */
+
 .panel {
-  background: #172033;
-  padding: 20px;
-  border-radius: 15px;
-  border: 1px solid #263449;
+  background: linear-gradient(145deg, #24141c, #111014);
+  padding: 22px;
+  border-radius: 18px;
+  border: 1px solid #572033;
   margin-bottom: 20px;
+  box-shadow: 0 15px 30px #0008;
 }
 
 .panel h3 {
-  color: #38bdf8;
+  color: var(--red);
   margin-bottom: 20px;
 }
+
+/* INPUTS */
 
 label {
   display: block;
   margin: 14px 0 8px;
-  color: #cbd5e1;
+  color: #e5dce0;
   font-size: 14px;
 }
 
 input, select, textarea {
   width: 100%;
   padding: 14px;
-  background: #0f172a;
+  background: #100d12;
   color: white;
-  border: 1px solid #334155;
-  border-radius: 9px;
+  border: 1px solid #572033;
+  border-radius: 10px;
   font-size: 15px;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px #ff294f20;
 }
 
 textarea {
   resize: vertical;
 }
 
+/* BUTTONS */
+
 button {
   width: 100%;
   padding: 15px;
   margin-top: 18px;
-  background: #0284c7;
+  background: linear-gradient(135deg, #ff405f, #a50025);
   color: white;
-  border: none;
-  border-radius: 9px;
+  border: 1px solid #ff526f66;
+  border-radius: 10px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+  box-shadow: 0 8px 20px #ff294f30;
+  transition: 0.25s ease;
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px #ff294f55;
 }
 
 button:active {
-  background: #0369a1;
+  transform: scale(0.98);
 }
+
+/* FOOTER */
 
 footer {
   text-align: center;
-  color: #64748b;
+  color: #82747b;
   font-size: 12px;
   padding: 20px;
 }
 
 input[type="file"] {
-  background: #172033;
+  background: #171116;
   padding: 12px;
   margin-bottom: 12px;
-  color: #38bdf8;
+  color: var(--red);
 }
+
+/* PHOTO PREVIEW */
 
 #photoPreview img {
   width: 100%;
@@ -163,31 +227,39 @@ input[type="file"] {
   object-fit: contain;
   border-radius: 12px;
   margin-top: 12px;
-  border: 1px solid #38bdf8;
+  border: 1px solid var(--red);
+  box-shadow: 0 0 20px #ff294f25;
 }
 
-/* Complaint cards */
+/* COMPLAINT CARDS */
 
 .complaint {
-  background: #0f172a;
-  border: 1px solid #334155;
-  border-radius: 12px;
-  padding: 15px;
+  background: linear-gradient(145deg, #21121a, #0d0d12);
+  border: 1px solid #572033;
+  border-radius: 15px;
+  padding: 17px;
   margin-bottom: 15px;
   overflow-wrap: anywhere;
+  box-shadow: 0 10px 25px #0008;
+  transition: 0.3s ease;
+}
+
+.complaint:hover {
+  border-color: var(--red);
+  transform: translateY(-3px);
 }
 
 .complaint h3 {
-  color: #38bdf8;
+  color: var(--red);
   margin-bottom: 12px;
 }
 
 .complaint p {
-  color: #cbd5e1;
+  color: #d1c5ca;
   margin-bottom: 8px;
 }
 
-/* Mobile responsive design */
+/* MOBILE RESPONSIVE */
 
 @media (max-width: 480px) {
   body {
@@ -221,5 +293,13 @@ input[type="file"] {
 
   input, select, textarea {
     font-size: 14px;
+  }
+}
+
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
   }
   }
