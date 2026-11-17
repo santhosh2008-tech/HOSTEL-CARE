@@ -1014,4 +1014,312 @@ photoInput.addEventListener("change", function() {
 /* UPDATE DASHBOARD */
 
 function updateDashboard() {
-  const studentComplaints 
+  const studentComplaints = getCurrentStudentComplaints();
+
+  const total = studentComplaints.length;
+  const pending = studentComplaints.filter(c => getStatus(c) === "Pending").length;
+  const inProgress = studentComplaints.filter(c => getStatus(c) === "In Progress").length;
+  const resolved = studentComplaints.filter(c => getStatus(c) === "Resolved").length;
+
+  document.getElementById("total").textContent = total;
+  document.getElementById("pending").textContent = pending;
+  document.getElementById("inProgress").textContent = inProgress;
+  document.getElementById("resolved").textContent = resolved;
+
+  const name = document.getElementById("student").value.trim();
+
+  document.getElementById("welcomeName").textContent =
+    name || "Student";
+
+  document.getElementById("profileLetter").textContent =
+    name ? name.charAt(0).toUpperCase() : "S";
+}
+
+/* STATUS BADGE */
+
+function getStatusClass(status) {
+  if(status === "Resolved") return "status-resolved";
+  if(status === "In Progress") return "status-progress";
+  return "status-pending";
+}
+
+/* RENDER COMPLAINTS */
+
+function renderComplaints() {
+  const list = document.getElementById("complaintList");
+  const studentComplaints = getCurrentStudentComplaints();
+
+  if(!document.getElementById("student").value.trim()) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <strong>Enter your name</strong>
+        Enter the same name used when submitting your complaints.
+      </div>`;
+    return;
+  }
+
+  const search = document.getElementById("searchInput")
+    .value.trim().toLowerCase();
+
+  const filter = document.getElementById("statusFilter").value;
+
+  const filtered = studentComplaints.filter(c => {
+    const status = getStatus(c);
+
+    const text = [
+      c.category,
+      c.description,
+      c.hostel,
+      c.room,
+      c.id
+    ].map(safeText).join(" ").toLowerCase();
+
+    return text.includes(search) &&
+      (filter === "All" || status === filter);
+  });
+
+  if(filtered.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <strong>No complaints found</strong>
+        No complaints match your name or search.
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(c => {
+    const status = getStatus(c);
+    const id = safeText(c.id || "HC-" + "N/A");
+
+    return `
+      <div class="complaint-item">
+        <div class="complaint-main">
+          <div class="complaint-title">
+            <h4>${escapeHTML(c.category || "General Complaint")}</h4>
+            <span class="complaint-id">${escapeHTML(id)}</span>
+          </div>
+
+          <p class="complaint-description">
+            ${escapeHTML(c.description || "No description")}
+          </p>
+
+          <div class="complaint-meta">
+            <span>Room: ${escapeHTML(getRoom(c))}</span>
+            <span>${escapeHTML(c.hostel || "Hostel")}</span>
+            <span>${escapeHTML(c.date || "")}</span>
+          </div>
+        </div>
+
+        <div class="complaint-actions">
+          <span class="status-badge ${getStatusClass(status)}">
+            ${escapeHTML(status)}
+          </span>
+
+          <button class="details-btn"
+            type="button"
+            onclick="showDetails('${escapeHTML(id)}')">
+            View Details →
+          </button>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+/* DETAILS MODAL */
+
+function showDetails(id) {
+  const complaint = getCurrentStudentComplaints().find(c =>
+    safeText(c.id || "HC-N/A") === id
+  );
+
+  if(!complaint) {
+    showToast("Complaint not found.");
+    return;
+  }
+
+  const status = getStatus(complaint);
+
+  const content = document.getElementById("modalContent");
+
+  content.innerHTML = `
+    <div class="detail-row">
+      <div class="detail-label">Complaint ID</div>
+      <div class="detail-value">${escapeHTML(complaint.id || "Not available")}</div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">Student Name</div>
+      <div class="detail-value">${escapeHTML(getStudentName(complaint))}</div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">Room Number</div>
+      <div class="detail-value">${escapeHTML(getRoom(complaint))}</div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">Category</div>
+      <div class="detail-value">${escapeHTML(complaint.category || "")}</div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">Hostel</div>
+      <div class="detail-value">${escapeHTML(complaint.hostel || "")}</div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">Description</div>
+      <div class="detail-value">${escapeHTML(complaint.description || "")}</div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">Date & Time</div>
+      <div class="detail-value">
+        ${escapeHTML(complaint.date || "")}
+        ${escapeHTML(complaint.time || "")}
+      </div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">Current Status</div>
+      <div class="detail-value">
+        <span class="status-badge ${getStatusClass(status)}">
+          ${escapeHTML(status)}
+        </span>
+      </div>
+    </div>
+
+    ${complaint.photo ? `
+      <div class="detail-row">
+        <div class="detail-label">Attached Photo</div>
+        <img class="modal-photo"
+          src="${escapeHTML(complaint.photo)}"
+          alt="Complaint photo">
+      </div>` : ""}
+  `;
+
+  document.getElementById("detailsModal").classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("detailsModal").classList.remove("show");
+}
+
+function closeModalOutside(event) {
+  if(event.target.id === "detailsModal") {
+    closeModal();
+  }
+}
+
+/* SUBMIT COMPLAINT */
+
+document.getElementById("complaintForm")
+.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const student = document.getElementById("student").value.trim();
+  const room = document.getElementById("room").value.trim();
+  const category = document.getElementById("category").value;
+  const hostel = document.getElementById("hostel").value;
+  const description = document.getElementById("description").value.trim();
+
+  if(!student || !room || !category || !hostel || !description) {
+    showToast("Please fill all required fields.");
+    return;
+  }
+
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
+  const now = new Date();
+
+  const newComplaint = {
+    id: "HC-" + Date.now(),
+    name: student,
+    studentName: student,
+    room: room,
+    category: category,
+    hostel: hostel,
+    description: description,
+    date: now.toLocaleDateString("en-IN"),
+    time: now.toLocaleTimeString("en-IN"),
+    status: "Pending",
+    photo: selectedPhoto
+  };
+
+  complaints = getComplaints();
+  complaints.push(newComplaint);
+
+  const saved = saveComplaints();
+
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Submit Complaint →";
+
+  if(!saved) return;
+
+  document.getElementById("searchInput").value = "";
+  document.getElementById("statusFilter").value = "All";
+
+  selectedPhoto = "";
+  photoInput.value = "";
+  photoPreview.innerHTML = "";
+  photoPreview.style.display = "none";
+
+  document.getElementById("room").value = "";
+  document.getElementById("category").value = "";
+  document.getElementById("hostel").value = "";
+  document.getElementById("description").value = "";
+
+  updateDashboard();
+  renderComplaints();
+
+  showToast("Complaint submitted successfully!");
+
+  document.getElementById("myComplaints").scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+});
+
+/* REFRESH */
+
+function refreshDashboard() {
+  complaints = getComplaints();
+  updateDashboard();
+  renderComplaints();
+  showToast("Dashboard refreshed.");
+}
+
+/* LIVE NAME FILTER */
+
+document.getElementById("student").addEventListener("input", function() {
+  updateDashboard();
+  renderComplaints();
+});
+
+document.getElementById("searchInput").addEventListener("input", renderComplaints);
+document.getElementById("statusFilter").addEventListener("change", renderComplaints);
+
+/* UPDATE WHEN STORAGE CHANGES IN ANOTHER TAB */
+
+window.addEventListener("storage", function(event) {
+  if(event.key === STORAGE_KEY) {
+    complaints = getComplaints();
+    updateDashboard();
+    renderComplaints();
+  }
+});
+
+/* INITIAL LOAD */
+
+updateDashboard();
+renderComplaints();
+
+</script>
+
+</body>
+</html>
+
