@@ -819,9 +819,11 @@ textarea {
 
 <script>
 
+
 /* STORAGE */
 
 const STORAGE_KEY = "hostelCareComplaints";
+const STUDENT_NAME_KEY = "hostelCareCurrentStudentName";
 
 function getComplaints() {
   try {
@@ -879,7 +881,9 @@ function getStatus(c) {
 }
 
 function getStudentName(c) {
-  return c.name || c.studentName || "Unknown Student";
+  return safeText(
+    c.name || c.studentName || c.student_name || ""
+  ).trim();
 }
 
 function getRoom(c) {
@@ -887,13 +891,13 @@ function getRoom(c) {
 }
 
 function getCurrentStudentComplaints() {
-  const name = document.getElementById("student").value
-    .trim().toLowerCase();
+  const name = document.getElementById("student")
+    .value.trim().toLowerCase();
 
   if(!name) return [];
 
   return getComplaints().filter(c =>
-    safeText(getStudentName(c)).trim().toLowerCase() === name
+    getStudentName(c).toLowerCase() === name
   );
 }
 
@@ -903,6 +907,7 @@ function showToast(message) {
   toast.classList.add("show");
 
   clearTimeout(window.toastTimer);
+
   window.toastTimer = setTimeout(() => {
     toast.classList.remove("show");
   }, 2800);
@@ -1016,15 +1021,17 @@ photoInput.addEventListener("change", function() {
 function updateDashboard() {
   const studentComplaints = getCurrentStudentComplaints();
 
-  const total = studentComplaints.length;
-  const pending = studentComplaints.filter(c => getStatus(c) === "Pending").length;
-  const inProgress = studentComplaints.filter(c => getStatus(c) === "In Progress").length;
-  const resolved = studentComplaints.filter(c => getStatus(c) === "Resolved").length;
+  document.getElementById("total").textContent =
+    studentComplaints.length;
 
-  document.getElementById("total").textContent = total;
-  document.getElementById("pending").textContent = pending;
-  document.getElementById("inProgress").textContent = inProgress;
-  document.getElementById("resolved").textContent = resolved;
+  document.getElementById("pending").textContent =
+    studentComplaints.filter(c => getStatus(c) === "Pending").length;
+
+  document.getElementById("inProgress").textContent =
+    studentComplaints.filter(c => getStatus(c) === "In Progress").length;
+
+  document.getElementById("resolved").textContent =
+    studentComplaints.filter(c => getStatus(c) === "Resolved").length;
 
   const name = document.getElementById("student").value.trim();
 
@@ -1068,10 +1075,11 @@ function renderComplaints() {
     const status = getStatus(c);
 
     const text = [
+      getStudentName(c),
       c.category,
       c.description,
       c.hostel,
-      c.room,
+      getRoom(c),
       c.id
     ].map(safeText).join(" ").toLowerCase();
 
@@ -1091,11 +1099,12 @@ function renderComplaints() {
 
   list.innerHTML = filtered.map(c => {
     const status = getStatus(c);
-    const id = safeText(c.id || "HC-" + "N/A");
+    const id = safeText(c.id || "HC-N/A");
 
     return `
       <div class="complaint-item">
         <div class="complaint-main">
+
           <div class="complaint-title">
             <h4>${escapeHTML(c.category || "General Complaint")}</h4>
             <span class="complaint-id">${escapeHTML(id)}</span>
@@ -1106,10 +1115,12 @@ function renderComplaints() {
           </p>
 
           <div class="complaint-meta">
+            <span>Student: ${escapeHTML(getStudentName(c) || "Not available")}</span>
             <span>Room: ${escapeHTML(getRoom(c))}</span>
             <span>${escapeHTML(c.hostel || "Hostel")}</span>
             <span>${escapeHTML(c.date || "")}</span>
           </div>
+
         </div>
 
         <div class="complaint-actions">
@@ -1140,7 +1151,6 @@ function showDetails(id) {
   }
 
   const status = getStatus(complaint);
-
   const content = document.getElementById("modalContent");
 
   content.innerHTML = `
@@ -1151,7 +1161,7 @@ function showDetails(id) {
 
     <div class="detail-row">
       <div class="detail-label">Student Name</div>
-      <div class="detail-value">${escapeHTML(getStudentName(complaint))}</div>
+      <div class="detail-value">${escapeHTML(getStudentName(complaint) || "Not available")}</div>
     </div>
 
     <div class="detail-row">
@@ -1230,6 +1240,9 @@ document.getElementById("complaintForm")
     return;
   }
 
+  // Save the current student's name
+  localStorage.setItem(STUDENT_NAME_KEY, student);
+
   const submitBtn = document.getElementById("submitBtn");
   submitBtn.disabled = true;
   submitBtn.textContent = "Submitting...";
@@ -1268,6 +1281,7 @@ document.getElementById("complaintForm")
   photoPreview.innerHTML = "";
   photoPreview.style.display = "none";
 
+  // Keep student name; clear only complaint fields
   document.getElementById("room").value = "";
   document.getElementById("category").value = "";
   document.getElementById("hostel").value = "";
@@ -1288,20 +1302,40 @@ document.getElementById("complaintForm")
 
 function refreshDashboard() {
   complaints = getComplaints();
+
+  // Restore saved student name if input is empty
+  const studentInput = document.getElementById("student");
+
+  if(!studentInput.value.trim()) {
+    studentInput.value =
+      localStorage.getItem(STUDENT_NAME_KEY) || "";
+  }
+
   updateDashboard();
   renderComplaints();
+
   showToast("Dashboard refreshed.");
 }
 
-/* LIVE NAME FILTER */
+/* LIVE NAME FILTER AND SAVE */
 
-document.getElementById("student").addEventListener("input", function() {
+const studentInput = document.getElementById("student");
+
+// Restore name when page opens
+studentInput.value =
+  localStorage.getItem(STUDENT_NAME_KEY) || "";
+
+studentInput.addEventListener("input", function() {
+  localStorage.setItem(STUDENT_NAME_KEY, this.value.trim());
   updateDashboard();
   renderComplaints();
 });
 
-document.getElementById("searchInput").addEventListener("input", renderComplaints);
-document.getElementById("statusFilter").addEventListener("change", renderComplaints);
+document.getElementById("searchInput")
+  .addEventListener("input", renderComplaints);
+
+document.getElementById("statusFilter")
+  .addEventListener("change", renderComplaints);
 
 /* UPDATE WHEN STORAGE CHANGES IN ANOTHER TAB */
 
@@ -1315,6 +1349,7 @@ window.addEventListener("storage", function(event) {
 
 /* INITIAL LOAD */
 
+complaints = getComplaints();
 updateDashboard();
 renderComplaints();
 
