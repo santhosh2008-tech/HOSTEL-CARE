@@ -140,8 +140,6 @@ button { cursor:pointer; }
   font-weight:600;
 }
 
-/* STATISTICS */
-
 .dashboard {
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
@@ -200,8 +198,6 @@ button { cursor:pointer; }
   margin-top:6px;
 }
 
-/* PANELS */
-
 .panel {
   background:var(--surface);
   border:1px solid var(--border);
@@ -219,9 +215,7 @@ button { cursor:pointer; }
   margin-bottom:21px;
 }
 
-.panel-heading h3 {
-  font-size:15px;
-}
+.panel-heading h3 { font-size:15px; }
 
 .panel-heading p {
   color:var(--muted);
@@ -240,8 +234,6 @@ button { cursor:pointer; }
   font-size:17px;
 }
 
-/* FORM */
-
 .form-grid {
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -255,9 +247,7 @@ button { cursor:pointer; }
   min-width:0;
 }
 
-.form-group.full {
-  grid-column:1/-1;
-}
+.form-group.full { grid-column:1/-1; }
 
 label {
   color:#d8cfd7;
@@ -277,9 +267,7 @@ input,select,textarea {
   transition:.2s;
 }
 
-input::placeholder,textarea::placeholder {
-  color:#756d78;
-}
+input::placeholder,textarea::placeholder { color:#756d78; }
 
 input:focus,select:focus,textarea:focus {
   border-color:var(--red);
@@ -361,8 +349,6 @@ textarea {
   transform:none;
 }
 
-/* MY COMPLAINTS */
-
 .complaint-toolbar {
   display:flex;
   gap:10px;
@@ -414,9 +400,7 @@ textarea {
   gap:9px;
 }
 
-.complaint-title h4 {
-  font-size:12px;
-}
+.complaint-title h4 { font-size:12px; }
 
 .complaint-id {
   font-size:9px;
@@ -495,8 +479,6 @@ textarea {
   font-size:14px;
   margin-bottom:7px;
 }
-
-/* MODAL */
 
 .modal-overlay {
   display:none;
@@ -590,6 +572,7 @@ textarea {
   transition:.3s;
   z-index:200;
   text-align:center;
+  max-width:90%;
 }
 
 .toast.show {
@@ -598,19 +581,14 @@ textarea {
 }
 
 @media(max-width:900px) {
-  .dashboard {
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
+  .dashboard { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 
 @media(max-width:600px) {
   .header { padding:15px 5%; }
   .brand h1 { font-size:18px; }
   .brand h3 { font-size:9px; }
-  .container {
-    width:92%;
-    padding-top:23px;
-  }
+  .container { width:92%; padding-top:23px; }
   .welcome h2 { font-size:20px; }
   .date-box { display:none; }
   .dashboard { gap:10px; }
@@ -627,9 +605,7 @@ textarea {
     align-items:center;
     justify-content:space-between;
   }
-  .complaint-toolbar {
-    flex-direction:column;
-  }
+  .complaint-toolbar { flex-direction:column; }
   .complaint-toolbar select,
   .complaint-toolbar input,
   .refresh-btn {
@@ -655,20 +631,18 @@ textarea {
       <h3>CMS College of Engineering and Technology</h3>
     </div>
   </div>
-  <div class="profile">S</div>
+  <div class="profile" id="profileLetter">S</div>
 </header>
 
 <main class="container">
 
   <section class="welcome">
     <div>
-      <h2>Welcome, <span>Student</span> 👋</h2>
+      <h2>Welcome, <span id="welcomeName">Student</span> 👋</h2>
       <p>Manage your hostel complaints easily.</p>
     </div>
     <div class="date-box" id="todayDate">Today</div>
   </section>
-
-  <!-- DASHBOARD STATISTICS -->
 
   <section class="dashboard">
 
@@ -709,8 +683,6 @@ textarea {
     </div>
 
   </section>
-
-  <!-- SUBMIT COMPLAINT -->
 
   <section class="panel" id="submitComplaint">
 
@@ -783,11 +755,8 @@ textarea {
         </div>
 
       </div>
-
     </form>
   </section>
-
-  <!-- MY COMPLAINTS -->
 
   <section class="panel" id="myComplaints">
 
@@ -818,8 +787,8 @@ textarea {
     <div id="complaintList">
       <div class="empty-state">
         <div class="empty-icon">📋</div>
-        <strong>No complaints yet</strong>
-        Submit your first complaint above.
+        <strong>Enter your name</strong>
+        Enter the same name used when submitting your complaints.
       </div>
     </div>
 
@@ -832,8 +801,6 @@ textarea {
   </footer>
 
 </main>
-
-<!-- DETAILS MODAL -->
 
 <div class="modal-overlay" id="detailsModal"
   onclick="closeModalOutside(event)">
@@ -852,9 +819,7 @@ textarea {
 
 <script>
 
-/* =====================================
-   STORAGE - EXISTING KEY PRESERVED
-===================================== */
+/* STORAGE */
 
 const STORAGE_KEY = "hostelCareComplaints";
 
@@ -873,10 +838,7 @@ let complaints = getComplaints();
 
 function saveComplaints() {
   try {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(complaints)
-    );
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(complaints));
     return true;
   } catch(error) {
     console.error("Save error:", error);
@@ -885,14 +847,23 @@ function saveComplaints() {
   }
 }
 
-/* =====================================
-   HELPERS
-===================================== */
+/* HELPERS */
 
 function safeText(value) {
   return value === null || value === undefined
-    ? ""
-    : String(value);
+    ? "" : String(value);
+}
+
+function escapeHTML(value) {
+  return safeText(value).replace(/[&<>"']/g, function(char) {
+    return {
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[char];
+  });
 }
 
 function getStatus(c) {
@@ -922,7 +893,7 @@ function getCurrentStudentComplaints() {
   if(!name) return [];
 
   return getComplaints().filter(c =>
-    getStudentName(c).trim().toLowerCase() === name
+    safeText(getStudentName(c)).trim().toLowerCase() === name
   );
 }
 
@@ -931,14 +902,13 @@ function showToast(message) {
   toast.textContent = message;
   toast.classList.add("show");
 
-  setTimeout(() => {
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => {
     toast.classList.remove("show");
   }, 2800);
 }
 
-/* =====================================
-   DATE
-===================================== */
+/* DATE */
 
 document.getElementById("todayDate").textContent =
   new Date().toLocaleDateString("en-IN", {
@@ -948,9 +918,7 @@ document.getElementById("todayDate").textContent =
     year:"numeric"
   });
 
-/* =====================================
-   PHOTO PREVIEW AND COMPRESSION
-===================================== */
+/* PHOTO PREVIEW AND COMPRESSION */
 
 let selectedPhoto = "";
 
@@ -958,7 +926,6 @@ const photoInput = document.getElementById("galleryPhoto");
 const photoPreview = document.getElementById("photoPreview");
 
 photoInput.addEventListener("change", function() {
-
   const file = this.files[0];
 
   selectedPhoto = "";
@@ -982,14 +949,12 @@ photoInput.addEventListener("change", function() {
   const reader = new FileReader();
 
   reader.onload = function(event) {
-
     const image = new Image();
 
     image.onload = function() {
-
       const canvas = document.createElement("canvas");
-
       const maxSize = 900;
+
       let width = image.width;
       let height = image.height;
 
@@ -1036,4 +1001,17 @@ photoInput.addEventListener("change", function() {
     };
 
     image.src = event.target.result;
- 
+  };
+
+  reader.onerror = function() {
+    showToast("Unable to read this file.");
+    photoInput.value = "";
+  };
+
+  reader.readAsDataURL(file);
+});
+
+/* UPDATE DASHBOARD */
+
+function updateDashboard() {
+  const studentComplaints 
