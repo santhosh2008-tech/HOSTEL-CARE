@@ -2,274 +2,532 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#08080c">
-  <title>HostelCare | Warden Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08080c">
+<title>HostelCare | Warden Command Center</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-    body {
-      background:
-        radial-gradient(circle at top, #35101c, transparent 45%),
-        linear-gradient(145deg, #08080c, #16080e, #08080c);
-      color: white;
-      font-family: Arial, sans-serif;
-      padding: 18px;
-      min-height: 100vh;
-    }
+:root {
+  --bg:#08080c;
+  --surface:#111016;
+  --surface2:#19131c;
+  --red:#ff294f;
+  --red2:#b90036;
+  --text:#fff;
+  --muted:#938b99;
+  --border:rgba(255,255,255,.08);
+}
 
-    header {
-      background: linear-gradient(145deg, #25121a, #100d13);
-      padding: 24px;
-      border: 1px solid #ff294f55;
-      border-radius: 18px;
-      margin-bottom: 25px;
-      box-shadow: 0 10px 30px #ff294f18;
-    }
+* {
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-    header h1 {
-      color: #ff4969;
-      margin-bottom: 8px;
-      font-size: 27px;
-    }
+body {
+  min-height:100vh;
+  padding:24px;
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
+  background:
+    radial-gradient(ellipse at 15% 0%,#68132b35,transparent 38%),
+    radial-gradient(ellipse at 95% 45%,#b9003620,transparent 35%),
+    linear-gradient(135deg,#08080c,#100b12 55%,#08080c);
+}
 
-    header p {
-      color: #aaa3ad;
-      font-size: 13px;
-      margin-top: 7px;
-    }
+.container {
+  max-width:1450px;
+  margin:auto;
+}
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 25px;
-    }
+header {
+  position:relative;
+  overflow:hidden;
+  padding:30px;
+  border:1px solid #ff294f35;
+  border-radius:25px;
+  background:linear-gradient(135deg,#28121e,#130f17 65%,#21101a);
+  box-shadow:
+    0 18px 45px #0009,
+    0 0 35px #ff294f12,
+    inset 0 1px 1px #ffffff18;
+  margin-bottom:28px;
+}
 
-    .stat {
-      background: linear-gradient(145deg, #251820, #100d13);
-      border: 1px solid #ff294f40;
-      padding: 20px 8px;
-      border-radius: 15px;
-      text-align: center;
-      box-shadow: 0 8px 20px #00000050;
-      transition: 0.3s ease;
-    }
+header:after {
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  right:-75px;
+  top:-100px;
+  background:#ff294f;
+  filter:blur(100px);
+  opacity:.22;
+}
 
-    .stat:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px #ff294f25;
-    }
+.header-content {
+  position:relative;
+  z-index:1;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:20px;
+}
 
-    .stat p {
-      color: #aaa3ad;
-      font-size: 12px;
-    }
+.brand {
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
 
-    .stat h2 {
-      color: #ff4969;
-      margin-top: 12px;
-      font-size: 27px;
-    }
+.logo {
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  font-size:29px;
+  border-radius:17px;
+  background:linear-gradient(145deg,#ff4969,#8b0028);
+  box-shadow:0 8px 25px #ff294f55,
+    inset 0 2px 4px #ffffff55;
+}
 
-    .panel {
-      background: linear-gradient(145deg, #1c1820, #100d13);
-      border: 1px solid #ffffff18;
-      padding: 20px;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px #00000060;
-    }
+h1 {
+  font-size:27px;
+  font-weight:900;
+  letter-spacing:-1px;
+}
 
-    .panel h2 {
-      color: #ff4969;
-      margin-bottom: 20px;
-      font-size: 21px;
-    }
+h1 span {
+  color:var(--red);
+}
 
-    label {
-      color: #ddd3db;
-      font-size: 14px;
-    }
+.subtitle {
+  color:var(--muted);
+  font-size:12px;
+  margin-top:6px;
+}
 
-    .complaint {
-      background: linear-gradient(145deg, #251820, #110d13);
-      border: 1px solid #ff294f40;
-      border-radius: 14px;
-      padding: 17px;
-      margin-bottom: 16px;
-      overflow-wrap: anywhere;
-      box-shadow: 0 7px 18px #00000040;
-      transition: 0.3s ease;
-    }
+.header-right {
+  text-align:right;
+}
 
-    .complaint:hover {
-      border-color: #ff4969;
-      transform: translateY(-3px);
-    }
+.live {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 14px;
+  border:1px solid #36d99540;
+  background:#36d99512;
+  color:#55e5a5;
+  border-radius:30px;
+  font-size:11px;
+  font-weight:700;
+}
 
-    .complaint h3 {
-      color: #ff4969;
-      margin-bottom: 14px;
-      font-size: 18px;
-    }
+.dot {
+  width:7px;
+  height:7px;
+  background:#55e5a5;
+  border-radius:50%;
+  box-shadow:0 0 10px #55e5a5;
+}
 
-    .complaint p {
-      color: #d1c8d0;
-      margin-bottom: 10px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
+.header-right p {
+  color:var(--muted);
+  font-size:11px;
+  margin-top:10px;
+}
 
-    .complaint img {
-      width: 100%;
-      max-height: 250px;
-      object-fit: contain;
-      margin-top: 12px;
-      border-radius: 10px;
-      background: #08080c;
-    }
+.section-heading {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:30px 0 17px;
+}
 
-    .complaint select,
-    #statusFilter {
-      width: 100%;
-      padding: 13px;
-      background: #100d13;
-      color: white;
-      border: 1px solid #ff294f80;
-      border-radius: 9px;
-      margin-top: 10px;
-      font-size: 14px;
-      outline: none;
-    }
+.section-heading h2 {
+  font-size:19px;
+  font-weight:800;
+}
 
-    select:focus {
-      border-color: #ff4969;
-      box-shadow: 0 0 10px #ff294f30;
-    }
+.section-heading p {
+  color:var(--muted);
+  font-size:11px;
+  margin-top:5px;
+}
 
-    select option {
-      background: #100d13;
-      color: white;
-    }
+.stats {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:17px;
+}
 
-    .empty {
-      color: #aaa3ad;
-      text-align: center;
-      padding: 25px;
-    }
+.stat {
+  position:relative;
+  overflow:hidden;
+  padding:24px;
+  min-height:150px;
+  border:1px solid var(--border);
+  border-radius:21px;
+  background:linear-gradient(145deg,#201821,#111016 65%,#171019);
+  box-shadow:
+    0 15px 30px #0007,
+    inset 0 1px 1px #ffffff12,
+    inset 0 -3px 10px #0005;
+  transition:.35s ease;
+}
 
-    button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 20px;
-      background: linear-gradient(135deg, #ff294f, #b9002c);
-      color: white;
-      border: 1px solid #ff5572;
-      border-radius: 11px;
-      font-weight: bold;
-      font-size: 15px;
-      cursor: pointer;
-      box-shadow: 0 5px 18px #ff294f40;
-      transition: 0.3s ease;
-    }
+.stat:hover {
+  transform:translateY(-7px) perspective(700px) rotateX(3deg);
+  border-color:#ff294f75;
+  box-shadow:0 20px 40px #ff294f18,0 15px 30px #0008;
+}
 
-    button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px #ff294f70;
-    }
+.stat:after {
+  content:"";
+  position:absolute;
+  width:100px;
+  height:100px;
+  right:-35px;
+  bottom:-40px;
+  border-radius:50%;
+  background:var(--glow);
+  filter:blur(40px);
+  opacity:.4;
+}
 
-    button:active {
-      transform: scale(0.97);
-    }
+.stat-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+  z-index:1;
+}
 
-    footer {
-      color: #716975;
-      text-align: center;
-      font-size: 12px;
-      margin-top: 25px;
-      padding: 15px;
-    }
+.stat-label {
+  color:#b5abb8;
+  font-size:12px;
+  font-weight:600;
+}
 
-    @media (max-width: 500px) {
-      body {
-        padding: 12px;
-      }
+.stat-icon {
+  width:37px;
+  height:37px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:var(--icon-bg);
+  font-size:17px;
+}
 
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
+.stat h3 {
+  position:relative;
+  z-index:1;
+  font-size:35px;
+  margin-top:17px;
+  font-weight:900;
+  letter-spacing:-1px;
+}
 
-      .stat {
-        padding: 16px 8px;
-      }
+.stat-total {--glow:#ff294f;--icon-bg:#ff294f22;}
+.stat-pending {--glow:#ffb84d;--icon-bg:#ffb84d20;}
+.stat-progress {--glow:#539dff;--icon-bg:#539dff20;}
+.stat-resolved {--glow:#36d995;--icon-bg:#36d99520;}
 
-      .stat p {
-        font-size: 12px;
-      }
+.stat-total h3 {color:#ff4969;}
+.stat-pending h3 {color:#ffb84d;}
+.stat-progress h3 {color:#6eafff;}
+.stat-resolved h3 {color:#55e5a5;}
 
-      .stat h2 {
-        font-size: 23px;
-      }
+.panel {
+  padding:25px;
+  border:1px solid var(--border);
+  border-radius:23px;
+  background:linear-gradient(145deg,#19151d,#100e14);
+  box-shadow:0 18px 40px #0007,
+    inset 0 1px 1px #ffffff10;
+}
 
-      .panel {
-        padding: 15px;
-      }
-    }
+.toolbar {
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:22px 0;
+}
 
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-      }
-    }
-  </style>
+.search {
+  flex:1;
+  min-width:190px;
+}
+
+.search input,
+.toolbar select {
+  width:100%;
+  height:47px;
+  padding:0 15px;
+  border:1px solid #ffffff16;
+  border-radius:12px;
+  background:#0c0a10;
+  color:white;
+  font-size:13px;
+  outline:none;
+  font-family:inherit;
+}
+
+.search input:focus,
+.toolbar select:focus {
+  border-color:var(--red);
+  box-shadow:0 0 15px #ff294f20;
+}
+
+.toolbar select {
+  max-width:220px;
+}
+
+.complaint {
+  position:relative;
+  overflow:hidden;
+  padding:23px;
+  margin-bottom:17px;
+  border:1px solid #ffffff12;
+  border-left:3px solid var(--red);
+  border-radius:17px;
+  background:linear-gradient(145deg,#241923,#151119 75%);
+  box-shadow:0 10px 25px #0006,
+    inset 0 1px 1px #ffffff0b;
+  transition:.3s ease;
+}
+
+.complaint:hover {
+  transform:translateY(-4px);
+  border-color:#ff294f70;
+  box-shadow:0 16px 35px #0008,0 0 20px #ff294f12;
+}
+
+.complaint h3 {
+  font-size:18px;
+  color:#ff637d;
+  margin-bottom:15px;
+}
+
+.complaint p {
+  font-size:13px;
+  line-height:1.7;
+  color:#d1c8d4;
+  overflow-wrap:anywhere;
+  margin-bottom:6px;
+}
+
+.complaint strong {
+  color:white;
+}
+
+.complaint img {
+  display:block;
+  width:100%;
+  max-height:300px;
+  object-fit:contain;
+  margin-top:17px;
+  border-radius:13px;
+  background:#08080c;
+  border:1px solid var(--border);
+}
+
+.status-label {
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:30px;
+  font-size:11px;
+  font-weight:700;
+  margin:12px 0;
+  background:#ffb84d18;
+  color:#ffbd59;
+  border:1px solid #ffb84d35;
+}
+
+.status-label.progress {
+  background:#539dff18;
+  color:#78b5ff;
+  border-color:#539dff40;
+}
+
+.status-label.resolved {
+  background:#36d99518;
+  color:#55e5a5;
+  border-color:#36d99540;
+}
+
+.complaint select {
+  display:block;
+  width:100%;
+  max-width:320px;
+  height:43px;
+  margin-top:9px;
+  padding:0 12px;
+  border-radius:10px;
+  border:1px solid #ff294f60;
+  color:white;
+  background:#100d13;
+  outline:none;
+  font-size:13px;
+}
+
+.empty {
+  padding:45px 15px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+  border:1px dashed #ffffff20;
+  border-radius:15px;
+}
+
+.logout {
+  display:block;
+  width:100%;
+  margin-top:25px;
+  padding:16px;
+  border:1px solid #ff4969;
+  border-radius:13px;
+  background:linear-gradient(135deg,#ff294f,#a90032);
+  color:white;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 8px 25px #ff294f35,
+    inset 0 1px 2px #ffffff45;
+  transition:.3s ease;
+}
+
+.logout:hover {
+  transform:translateY(-4px);
+  box-shadow:0 13px 30px #ff294f55;
+}
+
+footer {
+  text-align:center;
+  color:#77707b;
+  font-size:11px;
+  padding:30px 10px 12px;
+}
+
+@media(max-width:850px) {
+  .stats {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+
+@media(max-width:500px) {
+  body {padding:12px;}
+  header {padding:21px 17px;border-radius:19px;}
+  h1 {font-size:23px;}
+  .header-right {text-align:left;}
+  .stat {padding:18px 13px;min-height:130px;}
+  .stat h3 {font-size:29px;}
+  .panel {padding:16px;}
+  .toolbar select {max-width:none;}
+  .complaint {padding:17px;}
+}
+
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation:none!important;
+    transition:none!important;
+  }
+}
+</style>
 </head>
 
 <body>
+<div class="container">
 
 <header>
-  <h1>🛡️ HostelCare</h1>
-  <p>Warden Dashboard</p>
-  <p>CMS College of Engineering and Technology</p>
+  <div class="header-content">
+    <div class="brand">
+      <div class="logo">🛡️</div>
+      <div>
+        <h1>HOSTEL<span>CARE</span></h1>
+        <p class="subtitle">WARDEN COMMAND CENTER</p>
+        <p class="subtitle">CMS College of Engineering and Technology</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="live">
+        <span class="dot"></span>
+        SYSTEM ACTIVE
+      </div>
+      <p>Hostel Management Portal</p>
+    </div>
+  </div>
 </header>
+
+<div class="section-heading">
+  <div>
+    <h2>Dashboard Overview</h2>
+    <p>Monitor and manage student complaints</p>
+  </div>
+</div>
 
 <section class="stats">
 
-  <div class="stat">
-    <p>Total</p>
-    <h2 id="total">0</h2>
+  <div class="stat stat-total">
+    <div class="stat-top">
+      <p class="stat-label">TOTAL COMPLAINTS</p>
+      <span class="stat-icon">📊</span>
+    </div>
+    <h3 id="total">0</h3>
   </div>
 
-  <div class="stat">
-    <p>Pending</p>
-    <h2 id="pending">0</h2>
+  <div class="stat stat-pending">
+    <div class="stat-top">
+      <p class="stat-label">PENDING</p>
+      <span class="stat-icon">⏳</span>
+    </div>
+    <h3 id="pending">0</h3>
   </div>
 
-  <div class="stat">
-    <p>In Progress</p>
-    <h2 id="inProgress">0</h2>
+  <div class="stat stat-progress">
+    <div class="stat-top">
+      <p class="stat-label">IN PROGRESS</p>
+      <span class="stat-icon">⚙️</span>
+    </div>
+    <h3 id="inProgress">0</h3>
   </div>
 
-  <div class="stat">
-    <p>Resolved</p>
-    <h2 id="resolved">0</h2>
+  <div class="stat stat-resolved">
+    <div class="stat-top">
+      <p class="stat-label">RESOLVED</p>
+      <span class="stat-icon">✓</span>
+    </div>
+    <h3 id="resolved">0</h3>
   </div>
 
 </section>
 
+<div class="section-heading">
+  <div>
+    <h2>Student Complaints</h2>
+    <p>Review details and update complaint status</p>
+  </div>
+</div>
+
 <section class="panel">
 
-  <h2>📋 Student Complaints</h2>
-
-  <div style="margin-bottom:18px;">
-    <label for="statusFilter">Filter Complaints:</label>
+  <div class="toolbar">
+    <div class="search">
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="🔍 Search student, room or complaint..."
+        oninput="renderComplaints()"
+      >
+    </div>
 
     <select id="statusFilter" onchange="renderComplaints()">
       <option value="All">All Complaints</option>
@@ -285,157 +543,190 @@
 
 </section>
 
-<button type="button" onclick="logout()">↩ Logout</button>
+<button class="logout" type="button" onclick="logout()">
+  ↩ LOGOUT
+</button>
 
 <footer>
-  HostelCare © 2026 | Warden Dashboard
+  HOSTELCARE © 2026 | WARDEN COMMAND CENTER
+  <br><br>
+  Designed for smarter hostel management
 </footer>
 
+</div>
+
 <script>
-  const STORAGE_KEY = "hostelCareComplaints";
+const STORAGE_KEY = "hostelCareComplaints";
 
-  function getComplaints() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      const data = saved ? JSON.parse(saved) : [];
-      return Array.isArray(data) ? data : [];
-    } catch (error) {
-      alert("Unable to load complaints.");
-      return [];
-    }
+function getComplaints() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const data = saved ? JSON.parse(saved) : [];
+    return Array.isArray(data) ? data : [];
+  } catch(error) {
+    alert("Unable to load complaints.");
+    return [];
   }
+}
 
-  function saveComplaints(data) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      return true;
-    } catch (error) {
-      alert("Unable to save status. Please try again.");
-      return false;
-    }
+function saveComplaints(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch(error) {
+    alert("Unable to save status. Please try again.");
+    return false;
   }
+}
 
-  function updateDashboard(complaints) {
-    document.getElementById("total").textContent =
-      complaints.length;
+function updateDashboard(complaints) {
+  document.getElementById("total").textContent =
+    complaints.length;
 
-    document.getElementById("pending").textContent =
-      complaints.filter(c => c.status === "Pending").length;
+  document.getElementById("pending").textContent =
+    complaints.filter(c => c.status === "Pending").length;
 
-    document.getElementById("inProgress").textContent =
-      complaints.filter(c => c.status === "In Progress").length;
+  document.getElementById("inProgress").textContent =
+    complaints.filter(c => c.status === "In Progress").length;
 
-    document.getElementById("resolved").textContent =
-      complaints.filter(c => c.status === "Resolved").length;
-  }
+  document.getElementById("resolved").textContent =
+    complaints.filter(c => c.status === "Resolved").length;
+}
 
-  function updateStatus(id, newStatus) {
-    const complaints = getComplaints();
-    const index = complaints.findIndex(c => c.id === id);
+function updateStatus(id, newStatus) {
+  const complaints = getComplaints();
+  const index = complaints.findIndex(c => c.id === id);
 
-    if (index === -1) return;
+  if(index === -1) return;
 
-    const oldStatus = complaints[index].status;
-    complaints[index].status = newStatus;
+  const oldStatus = complaints[index].status;
+  complaints[index].status = newStatus;
 
-    if (!saveComplaints(complaints)) {
-      complaints[index].status = oldStatus;
-      renderComplaints();
-      return;
-    }
-
+  if(!saveComplaints(complaints)) {
+    complaints[index].status = oldStatus;
     renderComplaints();
-  }
-
-  function renderComplaints() {
-    const complaints = getComplaints();
-    const list = document.getElementById("complaintList");
-
-    updateDashboard(complaints);
-
-    list.innerHTML = "";
-
-    if (complaints.length === 0) {
-      list.innerHTML = '<p class="empty">No complaints yet.</p>';
-      return;
-    }
-
-    const filter = document.getElementById("statusFilter").value;
-
-    const filteredComplaints = filter === "All"
-      ? complaints
-      : complaints.filter(c => c.status === filter);
-
-    if (filteredComplaints.length === 0) {
-      list.innerHTML =
-        '<p class="empty">No complaints in this category.</p>';
-      return;
-    }
-
-    filteredComplaints.forEach(c => {
-      const card = document.createElement("div");
-      card.className = "complaint";
-
-      const title = document.createElement("h3");
-      title.textContent = c.category || "Complaint";
-      card.appendChild(title);
-
-      const fields = [
-        "Complaint ID: " + c.id,
-        "Student: " + c.name,
-        "Room: " + c.room,
-        "Hostel: " + c.hostel,
-        "Problem: " + c.description,
-        "Date: " + c.date,
-        "Time: " + c.time
-      ];
-
-      fields.forEach(value => {
-        const p = document.createElement("p");
-        p.textContent = value;
-        card.appendChild(p);
-      });
-
-      const statusLabel = document.createElement("p");
-      statusLabel.textContent = "Current Status: " + c.status;
-      card.appendChild(statusLabel);
-
-      const select = document.createElement("select");
-
-      ["Pending", "In Progress", "Resolved"].forEach(status => {
-        const option = document.createElement("option");
-        option.value = status;
-        option.textContent = status;
-
-        if (status === c.status) {
-          option.selected = true;
-        }
-
-        select.appendChild(option);
-      });
-
-      select.addEventListener("change", function() {
-        updateStatus(c.id, this.value);
-      });
-
-      card.appendChild(select);
-
-      if (c.photo) {
-        const img = document.createElement("img");
-        img.src = c.photo;
-        img.alt = "Complaint photo";
-        card.appendChild(img);
-      }
-
-      list.appendChild(card);
-    });
-  }
-
-  function logout() {
-    window.location.href = "index.html";
+    return;
   }
 
   renderComplaints();
+}
+
+function createText(tag, text, parent) {
+  const element = document.createElement(tag);
+  element.textContent = text ?? "";
+  parent.appendChild(element);
+  return element;
+}
+
+function renderComplaints() {
+  const complaints = getComplaints();
+  const list = document.getElementById("complaintList");
+
+  updateDashboard(complaints);
+  list.innerHTML = "";
+
+  if(complaints.length === 0) {
+    list.innerHTML =
+      '<p class="empty">No complaints yet.</p>';
+    return;
+  }
+
+  const filter = document.getElementById("statusFilter").value;
+  const search = document.getElementById("searchInput")
+    .value.trim().toLowerCase();
+
+  const filtered = complaints.filter(c => {
+    const matchesStatus =
+      filter === "All" || c.status === filter;
+
+    const searchable = [
+      c.id,c.name,c.room,c.hostel,
+      c.category,c.description,c.status
+    ].join(" ").toLowerCase();
+
+    return matchesStatus && searchable.includes(search);
+  });
+
+  if(filtered.length === 0) {
+    list.innerHTML =
+      '<p class="empty">No matching complaints found.</p>';
+    return;
+  }
+
+  filtered.forEach(c => {
+    const card = document.createElement("article");
+    card.className = "complaint";
+
+    createText("h3",c.category || "Complaint",card);
+
+    const fields = [
+      ["Complaint ID",c.id],
+      ["Student",c.name],
+      ["Room",c.room],
+      ["Hostel",c.hostel],
+      ["Problem",c.description],
+      ["Date",c.date],
+      ["Time",c.time]
+    ];
+
+    fields.forEach(([label,value]) => {
+      const p = document.createElement("p");
+      const strong = document.createElement("strong");
+      strong.textContent = label + ": ";
+      p.appendChild(strong);
+      p.appendChild(document.createTextNode(value ?? ""));
+      card.appendChild(p);
+    });
+
+    const status = c.status || "Pending";
+
+    const badge = createText(
+      "span",
+      "STATUS: " + status.toUpperCase(),
+      card
+    );
+
+    badge.className = "status-label";
+
+    if(status === "In Progress") {
+      badge.classList.add("progress");
+    } else if(status === "Resolved") {
+      badge.classList.add("resolved");
+    }
+
+    const select = document.createElement("select");
+
+    ["Pending","In Progress","Resolved"].forEach(value => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      option.selected = value === status;
+      select.appendChild(option);
+    });
+
+    select.addEventListener("change",function() {
+      updateStatus(c.id,this.value);
+    });
+
+    card.appendChild(select);
+
+    if(c.photo) {
+      const img = document.createElement("img");
+      img.src = c.photo;
+      img.alt = "Complaint photo";
+      img.loading = "lazy";
+      card.appendChild(img);
+    }
+
+    list.appendChild(card);
+  });
+}
+
+function logout() {
+  window.location.href = "index.html";
+}
+
+renderComplaints();
 </script>
 
 </body>
