@@ -326,3 +326,478 @@ body {
         padding: 25px 20px;
     }
    }
+
+/* =================================
+   HOSTELCARE - WARDEN DASHBOARD CSS
+   Theme: White + Royal Red + Rose
+================================= */
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+    background: #F7F8FC;
+}
+
+/* SIDEBAR */
+.layout .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: #FFFFFF;
+    border-right: 1px solid #E8EAF0;
+    padding: 25px 18px;
+    display: flex;
+    flex-direction: column;
+    transition: 0.3s ease;
+}
+
+.layout .logo {
+    font-size: 23px;
+    font-weight: 800;
+    color: #E63956;
+    padding: 10px 12px 30px;
+}
+
+.layout .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.layout .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 13px 15px;
+    border-radius: 12px;
+    color: #777B89;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.layout .nav-link:hover {
+    background: #FFF0F3;
+    color: #E63956;
+}
+
+.layout .nav-link.active {
+    background: #E63956;
+    color: #FFFFFF;
+}
+
+/* MAIN CONTENT */
+.layout .main-content {
+    flex: 1;
+    min-width: 0;
+    padding: 28px;
+}
+
+/* TOPBAR */
+.layout .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.layout .topbar h1 {
+    font-size: 25px;
+    font-weight: 800;
+    color: #20212A;
+}
+
+.layout .topbar p {
+    color: #777B89;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.layout .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* WARDEN BUTTONS */
+.layout button {
+    font-family: inherit;
+}
+
+.layout .menu-btn,
+.layout .notification-btn,
+.layout .logout-btn {
+    border: 1px solid #E8EAF0;
+    background: #FFFFFF;
+    color: #20212A;
+    border-radius: 11px;
+    padding: 11px 14px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.layout .logout-btn {
+    background: #FFF0F3;
+    color: #E63956;
+    border-color: #F8D5DC;
+}
+
+.layout .notification-btn {
+    position: relative;
+}
+
+/* SECTION */
+.layout .section {
+    display: none;
+}
+
+.layout .section.active {
+    display: block;
+}
+
+/* STATISTICS */
+.layout .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.layout .stat-card {
+    background: #FFFFFF;
+    border: 1px solid #E8EAF0;
+    border-radius: 17px;
+    padding: 22px;
+    box-shadow: 0 5px 20px rgba(30,30,50,0.035);
+}
+
+.layout .stat-card h3 {
+    color: #777B89;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 13px;
+}
+
+.layout .stat-card .number {
+    color: #20212A;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.layout .stat-card .icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background: #FFF0F3;
+    color: #E63956;
+}
+
+/* DASHBOARD PANELS */
+.layout .panel {
+    background: #FFFFFF;
+    border: 1px solid #E8EAF0;
+    border-radius: 18px;
+    padding: 23px;
+    margin-bottom: 22px;
+    box-shadow: 0 5px 20px rgba(30,30,50,0.035);
+}
+
+.layout .panel h2 {
+    font-size: 18px;
+    color: #20212A;
+    margin-bottom: 18px;
+}
+
+/* COMPLAINT TOOLBAR */
+.layout .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.layout .toolbar input,
+.layout .toolbar select {
+    padding: 12px 14px;
+    border: 1px solid #E8EAF0;
+    border-radius: 11px;
+    outline: none;
+    background: #FFFFFF;
+    color: #20212A;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.layout .toolbar input:focus,
+.layout .toolbar select:focus {
+    border-color: #E63956;
+}
+
+/* COMPLAINT LIST */
+.layout .complaint-list {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.layout .complaint-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    background: #FFFFFF;
+    border: 1px solid #E8EAF0;
+    border-radius: 14px;
+    padding: 18px;
+    transition: 0.2s;
+}
+
+.layout .complaint-card:hover {
+    border-color: #F4A1B0;
+    box-shadow: 0 5px 15px rgba(230,57,86,0.06);
+}
+
+.layout .complaint-card h3 {
+    font-size: 15px;
+    color: #20212A;
+    margin-bottom: 7px;
+}
+
+.layout .complaint-card p {
+    font-size: 12px;
+    color: #777B89;
+    margin-top: 5px;
+}
+
+/* STATUS BADGES */
+.layout .status {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.layout .status.pending {
+    background: #FFF3D9;
+    color: #B77912;
+}
+
+.layout .status.in-progress {
+    background: #E8F2FF;
+    color: #2874C8;
+}
+
+.layout .status.resolved {
+    background: #E4F8EF;
+    color: #138653;
+}
+
+/* STATUS SELECT */
+.layout .status-select {
+    padding: 9px 11px;
+    border: 1px solid #E8EAF0;
+    border-radius: 9px;
+    background: #FFFFFF;
+    color: #20212A;
+    font-family: inherit;
+    font-size: 12px;
+    outline: none;
+}
+
+/* ACTION BUTTONS */
+.layout .action-btn,
+.layout .view-btn {
+    border: none;
+    border-radius: 9px;
+    padding: 9px 13px;
+    background: #FFF0F3;
+    color: #E63956;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.layout .action-btn:hover,
+.layout .view-btn:hover {
+    background: #E63956;
+    color: #FFFFFF;
+}
+
+/* ANALYTICS */
+.layout .analytics-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+}
+
+.layout .chart-container {
+    width: 100%;
+    min-height: 230px;
+    position: relative;
+}
+
+.layout .progress-track {
+    width: 100%;
+    height: 11px;
+    background: #F1F1F5;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 14px 0;
+}
+
+.layout .progress-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #E63956, #F4A1B0);
+    border-radius: 20px;
+    transition: width 0.4s ease;
+}
+
+/* EMPTY STATE */
+.layout .empty-state {
+    text-align: center;
+    padding: 35px 15px;
+    color: #777B89;
+    font-size: 14px;
+}
+
+/* MODAL */
+.layout #detailsModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(20,20,30,0.55);
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
+
+.layout #detailsModal.active {
+    display: flex;
+}
+
+.layout .modal-content {
+    background: #FFFFFF;
+    width: 100%;
+    max-width: 560px;
+    max-height: 85vh;
+    overflow-y: auto;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.15);
+}
+
+.layout .modal-content h2 {
+    margin-bottom: 18px;
+    color: #20212A;
+}
+
+.layout .modal-content p {
+    font-size: 13px;
+    color: #555967;
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.layout .modal-content img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin-top: 12px;
+}
+
+/* MOBILE OVERLAY */
+.layout .mobile-overlay {
+    display: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1000px) {
+    .layout .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .layout .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .layout .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        bottom: 0;
+        z-index: 1200;
+        width: 260px;
+        transition: left 0.3s ease;
+    }
+
+    .layout .sidebar.open {
+        left: 0;
+    }
+
+    .layout .mobile-overlay.active {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+        z-index: 1100;
+    }
+
+    .layout .main-content {
+        width: 100%;
+        padding: 18px;
+    }
+
+    .layout .topbar {
+        align-items: flex-start;
+    }
+
+    .layout .topbar h1 {
+        font-size: 21px;
+    }
+}
+
+@media (max-width: 480px) {
+    .layout .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .layout .stat-card {
+        padding: 15px;
+    }
+
+    .layout .stat-card .number {
+        font-size: 25px;
+    }
+
+    .layout .panel {
+        padding: 16px;
+    }
+
+    .layout .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .layout .toolbar input,
+    .layout .toolbar select {
+        width: 100%;
+    }
+
+    .layout .topbar-right {
+        gap: 6px;
+    }
+   }
