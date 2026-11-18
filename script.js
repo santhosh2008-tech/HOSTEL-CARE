@@ -1460,3 +1460,265 @@ if (passwordInput) {
     renderMonthlyChart();
 
 })();
+
+/* =========================================
+   HOSTELCARE - WARDEN DASHBOARD
+   SECTION 5: EXPORT + NOTIFICATIONS
+   SIDEBAR + LOGOUT
+========================================= */
+
+(function () {
+
+    const layout = document.querySelector(".layout");
+
+    if (!layout) return;
+
+
+    // =====================================
+    // 1. NOTIFICATION COUNT
+    // =====================================
+
+    function updateNotificationCount() {
+
+        const complaints = window.wardenGetComplaints();
+
+        const pending = complaints.filter(
+            c => window.wardenGetStatus(c) === "Pending"
+        ).length;
+
+        const notificationCount =
+            document.getElementById("notificationCount");
+
+        if (notificationCount) {
+            notificationCount.textContent = pending;
+            notificationCount.style.display =
+                pending > 0 ? "inline-flex" : "none";
+        }
+
+    }
+
+
+    // =====================================
+    // 2. SHOW PENDING COMPLAINTS
+    // =====================================
+
+    function showPending() {
+
+        const statusFilter =
+            document.getElementById("statusFilter");
+
+        if (statusFilter) {
+            statusFilter.value = "Pending";
+            statusFilter.dispatchEvent(
+                new Event("change")
+            );
+        }
+
+        const complaintsSection =
+            document.getElementById("complaints");
+
+        if (complaintsSection) {
+            complaintsSection.scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+
+        // Activate complaints navigation
+        document.querySelectorAll(".nav-link").forEach(link => {
+            link.classList.remove("active");
+
+            if (link.dataset.section === "complaints") {
+                link.classList.add("active");
+            }
+        });
+
+    }
+
+
+    // =====================================
+    // 3. EXPORT CSV
+    // =====================================
+
+    function exportCSV() {
+
+        const complaints = window.wardenGetComplaints();
+
+        if (complaints.length === 0) {
+            alert("No complaints available to export.");
+            return;
+        }
+
+        const headers = [
+            "Complaint ID",
+            "Student Name",
+            "Room",
+            "Category",
+            "Hostel",
+            "Description",
+            "Date",
+            "Time",
+            "Status"
+        ];
+
+        function csvEscape(value) {
+            return '"' + String(value ?? "")
+                .replace(/"/g, '""') + '"';
+        }
+
+        const rows = complaints.map(c => [
+
+            c.id || "",
+            window.wardenGetStudentName(c),
+            window.wardenGetRoom(c),
+            c.category || "",
+            c.hostel || "",
+            c.description || "",
+            c.date || "",
+            c.time || "",
+            window.wardenGetStatus(c)
+
+        ]);
+
+        const csv = [
+            headers,
+            ...rows
+        ].map(row =>
+            row.map(csvEscape).join(",")
+        ).join("\r\n");
+
+        const blob = new Blob(
+            ["\uFEFF" + csv],
+            { type: "text/csv;charset=utf-8;" }
+        );
+
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "HostelCare_Complaints.csv";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        URL.revokeObjectURL(url);
+
+    }
+
+
+    // =====================================
+    // 4. SIDEBAR TOGGLE
+    // =====================================
+
+    function toggleSidebar() {
+
+        const sidebar =
+            document.getElementById("sidebar");
+
+        const overlay =
+            document.getElementById("mobileOverlay");
+
+        if (sidebar) {
+            sidebar.classList.toggle("active");
+        }
+
+        if (overlay) {
+            overlay.classList.toggle("active");
+        }
+
+    }
+
+
+    // =====================================
+    // 5. NAVIGATION
+    // =====================================
+
+    document.querySelectorAll(".nav-link").forEach(link => {
+
+        link.addEventListener("click", function () {
+
+            const sectionId = this.dataset.section;
+
+            if (!sectionId) return;
+
+            document.querySelectorAll(".nav-link").forEach(item => {
+                item.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            document.querySelectorAll(
+                ".content-section"
+            ).forEach(section => {
+                section.classList.remove("active");
+            });
+
+            const target =
+                document.getElementById(sectionId);
+
+            if (target) {
+                target.classList.add("active");
+            }
+
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const overlay =
+                document.getElementById("mobileOverlay");
+
+            if (sidebar) sidebar.classList.remove("active");
+            if (overlay) overlay.classList.remove("active");
+
+        });
+
+    });
+
+
+    // =====================================
+    // 6. LOGOUT
+    // =====================================
+
+    function logout() {
+
+        const confirmLogout = confirm(
+            "Are you sure you want to logout?"
+        );
+
+        if (!confirmLogout) return;
+
+        window.location.href = "index.html";
+
+    }
+
+
+    // =====================================
+    // 7. EXPOSE FUNCTIONS
+    // =====================================
+
+    window.updateNotificationCount = updateNotificationCount;
+    window.showPending = showPending;
+    window.exportCSV = exportCSV;
+    window.toggleSidebar = toggleSidebar;
+    window.logout = logout;
+
+
+    // =====================================
+    // 8. INITIALIZE
+    // =====================================
+
+    updateNotificationCount();
+
+    const todayDate =
+        document.getElementById("todayDate");
+
+    if (todayDate) {
+        todayDate.textContent =
+            new Date().toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            });
+    }
+
+})();
