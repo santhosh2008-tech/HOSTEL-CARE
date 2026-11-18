@@ -1031,3 +1031,178 @@ if (passwordInput) {
     renderComplaints();
 
 })();
+
+/* =========================================
+   HOSTELCARE - WARDEN DASHBOARD
+   SECTION 3: DETAILS MODAL + PHOTO
+========================================= */
+
+(function () {
+
+    const complaintList =
+        document.getElementById("complaintList");
+
+    const detailsModal =
+        document.getElementById("detailsModal");
+
+    const modalContent =
+        document.getElementById("modalContent");
+
+    if (!complaintList || !detailsModal || !modalContent) {
+        return;
+    }
+
+
+    // Safe HTML
+    function escapeModalHTML(value) {
+        return String(value ?? "").replace(
+            /[&<>"']/g,
+            char => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            })[char]
+        );
+    }
+
+
+    // Show complaint details
+    function showDetails(id) {
+
+        const complaints =
+            window.wardenGetComplaints();
+
+        const complaint = complaints.find(
+            c => String(c.id) === String(id)
+        );
+
+        if (!complaint) return;
+
+        const name = escapeModalHTML(
+            window.wardenGetStudentName(complaint)
+        );
+
+        const room = escapeModalHTML(
+            window.wardenGetRoom(complaint)
+        );
+
+        const category = escapeModalHTML(
+            complaint.category || "General"
+        );
+
+        const hostel = escapeModalHTML(
+            complaint.hostel || "Not specified"
+        );
+
+        const description = escapeModalHTML(
+            complaint.description || "No description"
+        );
+
+        const date = escapeModalHTML(
+            complaint.date || "Date unavailable"
+        );
+
+        const time = escapeModalHTML(
+            complaint.time || "Time unavailable"
+        );
+
+        const status = escapeModalHTML(
+            window.wardenGetStatus(complaint)
+        );
+
+        const complaintId = escapeModalHTML(
+            complaint.id || "Not available"
+        );
+
+        // Display photo only when it is an image data URL
+        const photo = typeof complaint.photo === "string" &&
+            /^data:image\/(jpeg|jpg|png|webp|gif);base64,/i.test(
+                complaint.photo
+            )
+            ? `<img src="${complaint.photo}"
+                    alt="Complaint Photo"
+                    class="modal-complaint-photo">`
+            : `<p>No photo attached</p>`;
+
+
+        modalContent.innerHTML = `
+
+            <div class="modal-details">
+
+                <h2>Complaint Details</h2>
+
+                <div class="modal-info">
+                    <p><strong>Student Name:</strong> ${name}</p>
+
+                    <p><strong>Room Number:</strong> ${room}</p>
+
+                    <p><strong>Category:</strong> ${category}</p>
+
+                    <p><strong>Hostel:</strong> ${hostel}</p>
+
+                    <p><strong>Date:</strong> ${date}</p>
+
+                    <p><strong>Time:</strong> ${time}</p>
+
+                    <p><strong>Status:</strong> ${status}</p>
+
+                    <p><strong>Complaint ID:</strong> ${complaintId}</p>
+                </div>
+
+                <div class="modal-description">
+                    <h3>Description</h3>
+                    <p>${description}</p>
+                </div>
+
+                <div class="modal-photo">
+                    <h3>Attached Photo</h3>
+                    ${photo}
+                </div>
+
+            </div>
+
+        `;
+
+        detailsModal.classList.add("show");
+
+    }
+
+
+    // View Details button
+    complaintList.addEventListener("click", function (event) {
+
+        const button = event.target.closest(
+            ".view-complaint-btn"
+        );
+
+        if (!button) return;
+
+        showDetails(button.dataset.complaintId);
+
+    });
+
+
+    // Close modal
+    function closeModal() {
+        detailsModal.classList.remove("show");
+    }
+
+
+    // Close when clicking outside modal
+    function closeModalOutside(event) {
+
+        if (event.target === detailsModal) {
+            closeModal();
+        }
+
+    }
+
+
+    // Expose functions
+    window.showDetails = showDetails;
+    window.closeModal = closeModal;
+    window.closeModalOutside = closeModalOutside;
+
+})();
