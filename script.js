@@ -1206,3 +1206,257 @@ if (passwordInput) {
     window.closeModalOutside = closeModalOutside;
 
 })();
+
+/* =========================================
+   HOSTELCARE - WARDEN DASHBOARD
+   SECTION 4: ANALYTICS + MONTHLY CHART
+========================================= */
+
+(function () {
+
+    const chart = document.getElementById("monthlyChart");
+
+    if (!chart) return;
+
+    // Convert complaint date into Date object
+    function parseComplaintDate(rawDate) {
+
+        if (!rawDate) return null;
+
+        // DD/MM/YYYY format
+        const parts = String(rawDate).match(
+            /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/
+        );
+
+        if (parts) {
+            const date = new Date(
+                Number(parts[3]),
+                Number(parts[2]) - 1,
+                Number(parts[1])
+            );
+
+            return isNaN(date.getTime()) ? null : date;
+        }
+
+        const date = new Date(rawDate);
+
+        return isNaN(date.getTime()) ? null : date;
+    }
+
+
+    // Monthly chart
+    function renderMonthlyChart() {
+
+        const complaints = window.wardenGetComplaints();
+
+        const today = new Date();
+
+        const months = [];
+
+        for (let i = 5; i >= 0; i--) {
+
+            const date = new Date(
+                today.getFullYear(),
+                today.getMonth() - i,
+                1
+            );
+
+            months.push({
+                label: date.toLocaleString("en", {
+                    month: "short"
+                }),
+                year: date.getFullYear(),
+                month: date.getMonth(),
+                count: 0
+            });
+
+        }
+
+
+        complaints.forEach(complaint => {
+
+            const date = parseComplaintDate(complaint.date);
+
+            if (!date) return;
+
+            const month = months.find(m =>
+                m.month === date.getMonth() &&
+                m.year === date.getFullYear()
+            );
+
+            if (month) {
+                month.count++;
+            }
+
+        });
+
+
+        // Draw chart
+        if (chart.tagName.toLowerCase() === "canvas") {
+
+            const ctx = chart.getContext("2d");
+
+            const width = chart.clientWidth || 600;
+            const height = chart.clientHeight || 250;
+
+            const ratio = window.devicePixelRatio || 1;
+
+            chart.width = width * ratio;
+            chart.height = height * ratio;
+
+            ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+            ctx.clearRect(0, 0, width, height);
+
+            const padding = 35;
+            const chartHeight = height - 65;
+            const chartWidth = width - padding * 2;
+
+            const maxValue = Math.max(
+                1,
+                ...months.map(m => m.count)
+            );
+
+            const slotWidth = chartWidth / months.length;
+
+            ctx.font = "12px Arial";
+            ctx.textAlign = "center";
+
+            months.forEach((month, index) => {
+
+                const barWidth = Math.min(35, slotWidth * 0.55);
+
+                const barHeight =
+                    (month.count / maxValue) * chartHeight;
+
+                const x =
+                    padding + index * slotWidth +
+                    (slotWidth - barWidth) / 2;
+
+                const y =
+                    chartHeight - barHeight + 10;
+
+                ctx.fillStyle = "#E63956";
+
+                ctx.beginPath();
+
+                ctx.roundRect(
+                    x,
+                    y,
+                    barWidth,
+                    Math.max(3, barHeight),
+                    6
+                );
+
+                ctx.fill();
+
+                ctx.fillStyle = "#20212A";
+
+                ctx.fillText(
+                    month.count,
+                    x + barWidth / 2,
+                    y - 8
+                );
+
+                ctx.fillStyle = "#777B89";
+
+                ctx.fillText(
+                    month.label,
+                    x + barWidth / 2,
+                    height - 15
+                );
+
+            });
+
+        } else {
+
+            // Fallback for a normal HTML container
+            const maxValue = Math.max(
+                1,
+                ...months.map(m => m.count)
+            );
+
+            chart.innerHTML = months.map(month => {
+
+                const percentage =
+                    (month.count / maxValue) * 100;
+
+                return `
+                    <div style="margin:12px 0;">
+                        <div style="
+                            display:flex;
+                            justify-content:space-between;
+                            margin-bottom:5px;
+                        ">
+                            <span>${month.label}</span>
+                            <strong>${month.count}</strong>
+                        </div>
+
+                        <div style="
+                            height:9px;
+                            background:#E8EAF0;
+                            border-radius:10px;
+                            overflow:hidden;
+                        ">
+                            <div style="
+                                width:${percentage}%;
+                                height:100%;
+                                background:#E63956;
+                                border-radius:10px;
+                            "></div>
+                        </div>
+                    </div>
+                `;
+
+            }).join("");
+
+        }
+
+
+        // Resolution statistics
+        const total = complaints.length;
+
+        const resolved = complaints.filter(
+            c => window.wardenGetStatus(c) === "Resolved"
+        ).length;
+
+        const rate = total > 0
+            ? Math.round((resolved / total) * 100)
+            : 0;
+
+        const resolutionRate =
+            document.getElementById("resolutionRate");
+
+        const resolutionProgress =
+            document.getElementById("resolutionProgress");
+
+        const resolvedSmall =
+            document.getElementById("resolvedSmall");
+
+        const remainingSmall =
+            document.getElementById("remainingSmall");
+
+        if (resolutionRate) {
+            resolutionRate.textContent = rate + "%";
+        }
+
+        if (resolutionProgress) {
+            resolutionProgress.style.width = rate + "%";
+        }
+
+        if (resolvedSmall) {
+            resolvedSmall.textContent = resolved;
+        }
+
+        if (remainingSmall) {
+            remainingSmall.textContent = total - resolved;
+        }
+
+    }
+
+
+    window.renderMonthlyChart = renderMonthlyChart;
+
+    renderMonthlyChart();
+
+})();
