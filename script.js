@@ -786,3 +786,248 @@ if (passwordInput) {
     updateDashboard();
 
 })();
+
+/* =========================================
+   HOSTELCARE - WARDEN DASHBOARD
+   SECTION 2: COMPLAINTS + STATUS UPDATE
+========================================= */
+
+(function () {
+
+    const complaintList =
+        document.getElementById("complaintList");
+
+    if (!complaintList) return;
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const statusFilter =
+        document.getElementById("statusFilter");
+
+
+    // Safe HTML text
+    function wardenEscapeHTML(value) {
+        return String(value ?? "").replace(
+            /[&<>"']/g,
+            char => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            })[char]
+        );
+    }
+
+
+    // Display complaints
+    function renderComplaints() {
+
+        const complaints = window.wardenGetComplaints();
+
+        const search = searchInput
+            ? searchInput.value.toLowerCase().trim()
+            : "";
+
+        const selectedStatus = statusFilter
+            ? statusFilter.value
+            : "All";
+
+        const filtered = complaints
+            .map((complaint, index) => ({
+                ...complaint,
+                originalIndex: index
+            }))
+            .filter(complaint => {
+
+                const name =
+                    window.wardenGetStudentName(complaint);
+
+                const room =
+                    window.wardenGetRoom(complaint);
+
+                const searchText = [
+                    name,
+                    room,
+                    complaint.hostel,
+                    complaint.category,
+                    complaint.description,
+                    complaint.id
+                ].join(" ").toLowerCase();
+
+                const matchesSearch =
+                    searchText.includes(search);
+
+                const matchesStatus =
+                    selectedStatus === "All" ||
+                    window.wardenGetStatus(complaint) === selectedStatus;
+
+                return matchesSearch && matchesStatus;
+            })
+            .reverse();
+
+
+        if (filtered.length === 0) {
+            complaintList.innerHTML = `
+                <div class="empty-state">
+                    <h3>No Complaints Found</h3>
+                    <p>There are no complaints matching your search.</p>
+                </div>
+            `;
+            return;
+        }
+
+
+        complaintList.innerHTML = filtered.map(c => {
+
+            const name = wardenEscapeHTML(
+                window.wardenGetStudentName(c)
+            );
+
+            const room = wardenEscapeHTML(
+                window.wardenGetRoom(c)
+            );
+
+            const category = wardenEscapeHTML(
+                c.category || "General"
+            );
+
+            const hostel = wardenEscapeHTML(
+                c.hostel || "Not specified"
+            );
+
+            const description = wardenEscapeHTML(
+                c.description || "No description"
+            );
+
+            const date = wardenEscapeHTML(
+                c.date || "Date unavailable"
+            );
+
+            const status =
+                window.wardenGetStatus(c);
+
+            const complaintId =
+                wardenEscapeHTML(c.id || "");
+
+            return `
+                <div class="complaint-card">
+
+                    <div class="complaint-header">
+                        <div>
+                            <h3>${name}</h3>
+                            <p>Room: ${room}</p>
+                        </div>
+
+                        <span class="status-badge">
+                            ${status}
+                        </span>
+                    </div>
+
+                    <div class="complaint-details">
+                        <p><strong>Category:</strong> ${category}</p>
+                        <p><strong>Hostel:</strong> ${hostel}</p>
+                        <p><strong>Date:</strong> ${date}</p>
+                        <p>${description}</p>
+                    </div>
+
+                    <div class="complaint-actions">
+
+                        <select
+                            class="warden-status-select"
+                            data-complaint-id="${complaintId}"
+                        >
+                            <option value="Pending"
+                                ${status === "Pending" ? "selected" : ""}>
+                                Pending
+                            </option>
+
+                            <option value="In Progress"
+                                ${status === "In Progress" ? "selected" : ""}>
+                                In Progress
+                            </option>
+
+                            <option value="Resolved"
+                                ${status === "Resolved" ? "selected" : ""}>
+                                Resolved
+                            </option>
+                        </select>
+
+                        <button
+                            type="button"
+                            class="view-complaint-btn"
+                            data-complaint-id="${complaintId}"
+                        >
+                            View Details
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
+
+    }
+
+
+    // Update complaint status
+    function updateWardenStatus(id, newStatus) {
+
+        const complaints = window.wardenGetComplaints();
+
+        const index = complaints.findIndex(
+            c => String(c.id) === String(id)
+        );
+
+        if (index === -1) return;
+
+        complaints[index].status = newStatus;
+
+        window.wardenSaveComplaints(complaints);
+
+        renderComplaints();
+
+        window.updateDashboard();
+
+    }
+
+
+    // Status change event
+    complaintList.addEventListener("change", function (event) {
+
+        if (!event.target.classList.contains(
+            "warden-status-select"
+        )) return;
+
+        const id = event.target.dataset.complaintId;
+
+        updateWardenStatus(id, event.target.value);
+
+    });
+
+
+    // Search and filter
+    if (searchInput) {
+        searchInput.addEventListener(
+            "input",
+            renderComplaints
+        );
+    }
+
+    if (statusFilter) {
+        statusFilter.addEventListener(
+            "change",
+            renderComplaints
+        );
+    }
+
+
+    // Expose function
+    window.renderComplaints = renderComplaints;
+
+    // Initial render
+    renderComplaints();
+
+})();
