@@ -2,1359 +2,261 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#09090d">
-<title>HostelCare | Student Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#F7F8FC">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>HostelCare | Student Dashboard</title>
 
-<style>
-:root {
-  --bg:#09090d;
-  --surface:#141319;
-  --surface2:#1c1921;
-  --red:#ed304f;
-  --red-dark:#c91e3b;
-  --rose:#f49aaa;
-  --text:#f7f3f5;
-  --muted:#a39ba7;
-  --border:#302832;
-  --green:#32c58a;
-  --orange:#f3ad4e;
-  --blue:#729bff;
-}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-* {
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
+  <link rel="stylesheet" href="style.css">
 
-body {
-  font-family:Inter,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-}
-
-button,input,select,textarea {
-  font:inherit;
-}
-
-button { cursor:pointer; }
-
-.header {
-  min-height:85px;
-  padding:18px 6%;
-  background:#111016;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-}
-
-.brand {
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.brand-icon {
-  width:45px;
-  height:45px;
-  background:linear-gradient(135deg,var(--red),#a91d43);
-  border-radius:13px;
-  display:grid;
-  place-items:center;
-  font-size:23px;
-  font-weight:800;
-  box-shadow:0 5px 20px #ed304f33;
-}
-
-.brand h1 {
-  font-size:21px;
-  font-weight:800;
-  letter-spacing:-.7px;
-}
-
-.brand h1 span { color:var(--rose); }
-
-.brand h3 {
-  font-size:10px;
-  color:var(--muted);
-  margin-top:4px;
-  font-weight:500;
-}
-
-.profile {
-  width:42px;
-  height:42px;
-  display:grid;
-  place-items:center;
-  border-radius:13px;
-  background:#321923;
-  color:var(--rose);
-  border:1px solid #63303d;
-  font-weight:800;
-  font-size:17px;
-}
-
-.container {
-  width:90%;
-  max-width:1250px;
-  margin:auto;
-  padding:32px 0 45px;
-}
-
-.welcome {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:26px;
-}
-
-.welcome h2 {
-  font-size:25px;
-  letter-spacing:-.8px;
-}
-
-.welcome h2 span { color:var(--rose); }
-
-.welcome p {
-  color:var(--muted);
-  font-size:12px;
-  margin-top:8px;
-}
-
-.date-box {
-  padding:11px 15px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:10px;
-  color:var(--rose);
-  font-size:11px;
-  font-weight:600;
-}
-
-.dashboard {
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:16px;
-  margin-bottom:25px;
-}
-
-.stat-card {
-  background:linear-gradient(145deg,#19161e,#111016);
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:21px;
-  transition:.2s;
-}
-
-.stat-card:hover {
-  transform:translateY(-3px);
-  border-color:#743044;
-}
-
-.stat-top {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.stat-card p {
-  color:var(--muted);
-  font-size:11px;
-  font-weight:600;
-}
-
-.stat-icon {
-  width:35px;
-  height:35px;
-  display:grid;
-  place-items:center;
-  border-radius:10px;
-  font-size:16px;
-}
-
-.red { background:#401923; color:var(--rose); }
-.orange { background:#392b19; color:var(--orange); }
-.blue { background:#202b45; color:var(--blue); }
-.green { background:#17382c; color:var(--green); }
-
-.stat-card h2 {
-  font-size:30px;
-  margin-top:17px;
-  font-weight:800;
-}
-
-.stat-note {
-  font-size:10px;
-  color:#817986;
-  margin-top:6px;
-}
-
-.panel {
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:23px;
-  margin-bottom:23px;
-  min-width:0;
-}
-
-.panel-heading {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:21px;
-}
-
-.panel-heading h3 { font-size:15px; }
-
-.panel-heading p {
-  color:var(--muted);
-  font-size:10px;
-  margin-top:5px;
-}
-
-.heading-icon {
-  width:38px;
-  height:38px;
-  display:grid;
-  place-items:center;
-  background:#351923;
-  color:var(--rose);
-  border-radius:11px;
-  font-size:17px;
-}
-
-.form-grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:17px;
-}
-
-.form-group {
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  min-width:0;
-}
-
-.form-group.full { grid-column:1/-1; }
-
-label {
-  color:#d8cfd7;
-  font-size:11px;
-  font-weight:600;
-}
-
-input,select,textarea {
-  width:100%;
-  background:#0d0c11;
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:13px 14px;
-  border-radius:10px;
-  outline:none;
-  font-size:12px;
-  transition:.2s;
-}
-
-input::placeholder,textarea::placeholder { color:#756d78; }
-
-input:focus,select:focus,textarea:focus {
-  border-color:var(--red);
-  box-shadow:0 0 0 3px #ed304f16;
-}
-
-select option {
-  background:#17141c;
-  color:white;
-}
-
-textarea {
-  resize:vertical;
-  min-height:110px;
-  line-height:1.6;
-}
-
-.file-input {
-  padding:12px;
-  border:1px dashed #68404b;
-  background:#171219;
-}
-
-.file-input::file-selector-button {
-  background:#46202b;
-  border:0;
-  padding:9px 12px;
-  color:var(--rose);
-  border-radius:7px;
-  margin-right:10px;
-  cursor:pointer;
-  font-size:11px;
-}
-
-#photoPreview {
-  display:none;
-  margin-top:10px;
-}
-
-#photoPreview img {
-  max-width:180px;
-  max-height:150px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  object-fit:cover;
-}
-
-.remove-photo {
-  display:block;
-  background:none;
-  border:0;
-  color:var(--rose);
-  font-size:10px;
-  margin-top:7px;
-}
-
-.submit-btn {
-  width:100%;
-  padding:14px;
-  border:0;
-  border-radius:10px;
-  background:linear-gradient(135deg,var(--red),var(--red-dark));
-  color:white;
-  font-weight:700;
-  font-size:12px;
-  margin-top:5px;
-  box-shadow:0 5px 18px #ed304f25;
-  transition:.2s;
-}
-
-.submit-btn:hover {
-  transform:translateY(-2px);
-  box-shadow:0 8px 24px #ed304f40;
-}
-
-.submit-btn:disabled {
-  opacity:.6;
-  cursor:not-allowed;
-  transform:none;
-}
-
-.complaint-toolbar {
-  display:flex;
-  gap:10px;
-  margin-bottom:15px;
-  flex-wrap:wrap;
-}
-
-.complaint-toolbar input {
-  flex:1;
-  min-width:160px;
-}
-
-.complaint-toolbar select {
-  width:auto;
-  min-width:135px;
-}
-
-.refresh-btn {
-  background:#281820;
-  color:var(--rose);
-  border:1px solid #60303d;
-  border-radius:9px;
-  padding:0 14px;
-  font-size:11px;
-  font-weight:600;
-}
-
-.complaint-item {
-  padding:17px;
-  border:1px solid var(--border);
-  background:#100f14;
-  border-radius:12px;
-  margin-bottom:12px;
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
-  align-items:flex-start;
-}
-
-.complaint-main {
-  flex:1;
-  min-width:0;
-}
-
-.complaint-title {
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:9px;
-}
-
-.complaint-title h4 { font-size:12px; }
-
-.complaint-id {
-  font-size:9px;
-  color:#928794;
-}
-
-.complaint-description {
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.6;
-  margin:9px 0;
-  overflow-wrap:anywhere;
-}
-
-.complaint-meta {
-  display:flex;
-  gap:13px;
-  flex-wrap:wrap;
-  font-size:10px;
-  color:#928794;
-}
-
-.complaint-actions {
-  display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-  gap:10px;
-}
-
-.status-badge {
-  padding:7px 10px;
-  border-radius:20px;
-  font-size:9px;
-  font-weight:700;
-  white-space:nowrap;
-}
-
-.status-pending {
-  background:#392b19;
-  color:var(--orange);
-}
-
-.status-progress {
-  background:#202b45;
-  color:var(--blue);
-}
-
-.status-resolved {
-  background:#17382c;
-  color:var(--green);
-}
-
-.details-btn {
-  border:0;
-  background:none;
-  color:var(--rose);
-  font-size:10px;
-  font-weight:700;
-}
-
-.empty-state {
-  text-align:center;
-  padding:40px 15px;
-  color:var(--muted);
-  font-size:11px;
-}
-
-.empty-icon {
-  font-size:30px;
-  margin-bottom:12px;
-}
-
-.empty-state strong {
-  display:block;
-  color:var(--text);
-  font-size:14px;
-  margin-bottom:7px;
-}
-
-.modal-overlay {
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#000b;
-  z-index:100;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-}
-
-.modal-overlay.show { display:flex; }
-
-.modal {
-  width:100%;
-  max-width:480px;
-  max-height:85vh;
-  overflow:auto;
-  background:#19161e;
-  border:1px solid #48313d;
-  border-radius:16px;
-  padding:23px;
-}
-
-.modal-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:18px;
-}
-
-.modal-header h3 { font-size:16px; }
-
-.close-btn {
-  width:32px;
-  height:32px;
-  background:#30232d;
-  color:white;
-  border:0;
-  border-radius:9px;
-  font-size:19px;
-}
-
-.detail-row {
-  padding:12px 0;
-  border-bottom:1px solid var(--border);
-}
-
-.detail-label {
-  color:var(--muted);
-  font-size:10px;
-  margin-bottom:6px;
-}
-
-.detail-value {
-  font-size:12px;
-  line-height:1.6;
-  overflow-wrap:anywhere;
-}
-
-.modal-photo {
-  max-width:100%;
-  max-height:220px;
-  object-fit:contain;
-  border-radius:10px;
-  margin-top:10px;
-}
-
-.footer {
-  text-align:center;
-  padding:15px 0 5px;
-  color:#716a76;
-  font-size:10px;
-  line-height:1.9;
-}
-
-.toast {
-  position:fixed;
-  bottom:22px;
-  left:50%;
-  transform:translate(-50%,20px);
-  background:#17382c;
-  border:1px solid #286b50;
-  color:#a8f1d0;
-  padding:13px 20px;
-  border-radius:10px;
-  font-size:11px;
-  opacity:0;
-  pointer-events:none;
-  transition:.3s;
-  z-index:200;
-  text-align:center;
-  max-width:90%;
-}
-
-.toast.show {
-  opacity:1;
-  transform:translate(-50%,0);
-}
-
-@media(max-width:900px) {
-  .dashboard { grid-template-columns:repeat(2,minmax(0,1fr)); }
-}
-
-@media(max-width:600px) {
-  .header { padding:15px 5%; }
-  .brand h1 { font-size:18px; }
-  .brand h3 { font-size:9px; }
-  .container { width:92%; padding-top:23px; }
-  .welcome h2 { font-size:20px; }
-  .date-box { display:none; }
-  .dashboard { gap:10px; }
-  .stat-card { padding:15px; }
-  .stat-card h2 { font-size:25px; }
-  .stat-card p { font-size:10px; }
-  .panel { padding:17px; }
-  .form-grid { grid-template-columns:1fr; }
-  .form-group.full { grid-column:auto; }
-  .complaint-item { flex-direction:column; }
-  .complaint-actions {
-    width:100%;
-    flex-direction:row;
-    align-items:center;
-    justify-content:space-between;
-  }
-  .complaint-toolbar { flex-direction:column; }
-  .complaint-toolbar select,
-  .complaint-toolbar input,
-  .refresh-btn {
-    width:100%;
-    min-height:42px;
-  }
-}
-
-@media(max-width:350px) {
-  .stat-card { padding:12px; }
-  .stat-card h2 { font-size:22px; }
-}
-</style>
+  <script src="script.js" defer></script>
 </head>
 
 <body>
 
-<header class="header">
-  <div class="brand">
-    <div class="brand-icon">H</div>
-    <div>
-      <h1>Hostel<span>Care</span></h1>
-      <h3>CMS College of Engineering and Technology</h3>
-    </div>
-  </div>
-  <div class="profile" id="profileLetter">S</div>
-</header>
-
-<main class="container">
-
-  <section class="welcome">
-    <div>
-      <h2>Welcome, <span id="welcomeName">Student</span> 👋</h2>
-      <p>Manage your hostel complaints easily.</p>
-    </div>
-    <div class="date-box" id="todayDate">Today</div>
-  </section>
-
-  <section class="dashboard">
-
-    <div class="stat-card">
-      <div class="stat-top">
-        <p>Total Complaints</p>
-        <div class="stat-icon red">▤</div>
-      </div>
-      <h2 id="total">0</h2>
-      <div class="stat-note">Your submitted complaints</div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-top">
-        <p>Pending</p>
-        <div class="stat-icon orange">◷</div>
-      </div>
-      <h2 id="pending">0</h2>
-      <div class="stat-note">Waiting for attention</div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-top">
-        <p>In Progress</p>
-        <div class="stat-icon blue">↻</div>
-      </div>
-      <h2 id="inProgress">0</h2>
-      <div class="stat-note">Currently being handled</div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-top">
-        <p>Resolved</p>
-        <div class="stat-icon green">✓</div>
-      </div>
-      <h2 id="resolved">0</h2>
-      <div class="stat-note">Successfully completed</div>
-    </div>
-
-  </section>
-
-  <section class="panel" id="submitComplaint">
-
-    <div class="panel-heading">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="brand">
+      <div class="brand-logo">H</div>
       <div>
-        <h3>＋ Submit a Complaint</h3>
-        <p>Tell us about your hostel problem.</p>
+        <h2>HostelCare</h2>
+        <span>Student Portal</span>
       </div>
-      <div class="heading-icon">✎</div>
     </div>
 
-    <form id="complaintForm">
+    <div class="profile" id="profileLetter">S</div>
+  </header>
 
-      <div class="form-grid">
+  <main class="container">
 
-        <div class="form-group">
-          <label for="student">Student Name *</label>
-          <input id="student" type="text"
-            placeholder="Enter your name" required maxlength="80">
+    <!-- WELCOME -->
+    <section class="welcome">
+      <div>
+        <p class="welcome-label">STUDENT DASHBOARD</p>
+        <h1>Welcome, <span id="welcomeName">Student</span>!</h1>
+        <p>Manage your hostel complaints and track their progress.</p>
+      </div>
+
+      <div class="date-box">
+        <span>Today</span>
+        <strong id="todayDate"></strong>
+      </div>
+    </section>
+
+    <!-- DASHBOARD STATS -->
+    <section class="dashboard">
+
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <p>Total Complaints</p>
+        <h2 id="total">0</h2>
+        <span>All submitted complaints</span>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🕒</div>
+        <p>Pending</p>
+        <h2 id="pending">0</h2>
+        <span>Waiting for action</span>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⚙️</div>
+        <p>In Progress</p>
+        <h2 id="inProgress">0</h2>
+        <span>Currently being handled</span>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">✓</div>
+        <p>Resolved</p>
+        <h2 id="resolved">0</h2>
+        <span>Successfully completed</span>
+      </div>
+
+    </section>
+
+    <!-- COMPLAINT FORM -->
+    <section class="panel">
+
+      <div class="panel-header">
+        <div>
+          <h2>Submit a Complaint</h2>
+          <p>Tell us about your hostel issue.</p>
         </div>
 
-        <div class="form-group">
-          <label for="room">Room Number *</label>
-          <input id="room" type="text"
-            placeholder="Enter room number" required maxlength="30">
+        <span class="panel-badge">NEW COMPLAINT</span>
+      </div>
+
+      <form id="complaintForm">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="student">Student Name *</label>
+            <input
+              type="text"
+              id="student"
+              placeholder="Enter your full name"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="room">Room Number *</label>
+            <input
+              type="text"
+              id="room"
+              placeholder="Enter room number"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="category">Complaint Category *</label>
+            <select id="category" required>
+              <option value="">Select category</option>
+              <option value="Water Problem">Water Problem</option>
+              <option value="Electrical Problem">Electrical Problem</option>
+              <option value="Food Problem">Food Problem</option>
+              <option value="Cleaning Problem">Cleaning Problem</option>
+              <option value="Room Maintenance">Room Maintenance</option>
+              <option value="Internet Problem">Internet Problem</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="hostel">Hostel Block *</label>
+            <select id="hostel" required>
+              <option value="">Select hostel block</option>
+              <option value="A Block">A Block</option>
+              <option value="B Block">B Block</option>
+              <option value="C Block">C Block</option>
+              <option value="D Block">D Block</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="description">Complaint Description *</label>
+            <textarea
+              id="description"
+              rows="5"
+              placeholder="Describe your complaint clearly..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="galleryPhoto">Attach Photo (Optional)</label>
+
+            <input
+              type="file"
+              id="galleryPhoto"
+              accept="image/*"
+            >
+
+            <div id="photoPreview"></div>
+          </div>
+
         </div>
 
-        <div class="form-group">
-          <label for="category">Complaint Category *</label>
-          <select id="category" required>
-            <option value="">Select category</option>
-            <option>Water Problem</option>
-            <option>Bathroom Problem</option>
-            <option>Electricity Problem</option>
-            <option>Food Problem</option>
-            <option>Wi-Fi Problem</option>
-            <option>Cleaning Problem</option>
-            <option>Maintenance Problem</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="hostel">Select Hostel *</label>
-          <select id="hostel" required>
-            <option value="">Choose Hostel</option>
-            <option>Boys Hostel</option>
-            <option>Girls Hostel</option>
-          </select>
-        </div>
-
-        <div class="form-group full">
-          <label for="description">Describe Your Problem *</label>
-          <textarea id="description"
-            placeholder="Explain your problem clearly..."
-            required maxlength="2000"></textarea>
-        </div>
-
-        <div class="form-group full">
-          <label for="galleryPhoto">Attach Problem Photo (Optional)</label>
-          <input class="file-input" type="file"
-            id="galleryPhoto" accept="image/*">
-          <div id="photoPreview"></div>
-        </div>
-
-        <div class="form-group full">
-          <button class="submit-btn" id="submitBtn" type="submit">
+        <div class="form-actions">
+          <button type="submit" id="submitBtn">
             Submit Complaint →
           </button>
         </div>
 
+      </form>
+
+    </section>
+
+    <!-- MY COMPLAINTS -->
+    <section class="panel" id="myComplaints">
+
+      <div class="panel-header">
+        <div>
+          <h2>My Complaints</h2>
+          <p>Track and view your submitted complaints.</p>
+        </div>
+
+        <button
+          type="button"
+          class="refresh-btn"
+          onclick="refreshDashboard()"
+        >
+          ↻ Refresh
+        </button>
       </div>
-    </form>
-  </section>
 
-  <section class="panel" id="myComplaints">
+      <!-- SEARCH AND FILTER -->
+      <div class="filter-row">
 
-    <div class="panel-heading">
-      <div>
-        <h3>▤ My Complaints</h3>
-        <p>Track the status of your submitted complaints.</p>
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="Search complaints..."
+        >
+
+        <select id="statusFilter">
+          <option value="All">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+
       </div>
-      <div class="heading-icon">☷</div>
-    </div>
 
-    <div class="complaint-toolbar">
-      <input type="search" id="searchInput"
-        placeholder="Search complaint...">
+      <!-- COMPLAINT LIST -->
+      <div id="complaintList">
 
-      <select id="statusFilter">
-        <option value="All">All Status</option>
-        <option value="Pending">Pending</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Resolved">Resolved</option>
-      </select>
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <strong>No complaints yet</strong>
+          Your submitted complaints will appear here.
+        </div>
 
-      <button class="refresh-btn" type="button" onclick="refreshDashboard()">
-        ↻ Refresh
-      </button>
-    </div>
-
-    <div id="complaintList">
-      <div class="empty-state">
-        <div class="empty-icon">📋</div>
-        <strong>Enter your name</strong>
-        Enter the same name used when submitting your complaints.
       </div>
+
+    </section>
+
+  </main>
+
+  <!-- DETAILS MODAL -->
+  <div
+    class="modal-overlay"
+    id="detailsModal"
+    onclick="closeModalOutside(event)"
+  >
+
+    <div class="modal-box">
+
+      <div class="modal-header">
+        <h2>Complaint Details</h2>
+
+        <button
+          type="button"
+          class="modal-close"
+          onclick="closeModal()"
+        >
+          ×
+        </button>
+      </div>
+
+      <div id="modalContent"></div>
+
     </div>
 
-  </section>
-
-  <footer class="footer">
-    <p>HostelCare © 2026</p>
-    <p>Made for a better hostel experience.</p>
-    <p>CMS College of Engineering and Technology</p>
-  </footer>
-
-</main>
-
-<div class="modal-overlay" id="detailsModal"
-  onclick="closeModalOutside(event)">
-
-  <div class="modal">
-    <div class="modal-header">
-      <h3>Complaint Details</h3>
-      <button class="close-btn" onclick="closeModal()">×</button>
-    </div>
-    <div id="modalContent"></div>
   </div>
 
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-
-
-/* STORAGE */
-
-const STORAGE_KEY = "hostelCareComplaints";
-const STUDENT_NAME_KEY = "hostelCareCurrentStudentName";
-
-function getComplaints() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    const parsed = data ? JSON.parse(data) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch(error) {
-    console.error("Storage error:", error);
-    return [];
-  }
-}
-
-let complaints = getComplaints();
-
-function saveComplaints() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(complaints));
-    return true;
-  } catch(error) {
-    console.error("Save error:", error);
-    showToast("Unable to save. Storage may be full.");
-    return false;
-  }
-}
-
-/* HELPERS */
-
-function safeText(value) {
-  return value === null || value === undefined
-    ? "" : String(value);
-}
-
-function escapeHTML(value) {
-  return safeText(value).replace(/[&<>"']/g, function(char) {
-    return {
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#039;"
-    }[char];
-  });
-}
-
-function getStatus(c) {
-  const status = safeText(c.status).trim().toLowerCase();
-
-  if(status === "resolved") return "Resolved";
-
-  if(status === "in progress" || status === "in-progress") {
-    return "In Progress";
-  }
-
-  return "Pending";
-}
-
-function getStudentName(c) {
-  return safeText(
-    c.name || c.studentName || c.student_name || ""
-  ).trim();
-}
-
-function getRoom(c) {
-  return c.room || c.roomNo || "Not specified";
-}
-
-function getCurrentStudentComplaints() {
-  const name = document.getElementById("student")
-    .value.trim().toLowerCase();
-
-  if(!name) return [];
-
-  return getComplaints().filter(c =>
-    getStudentName(c).toLowerCase() === name
-  );
-}
-
-function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  clearTimeout(window.toastTimer);
-
-  window.toastTimer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2800);
-}
-
-/* DATE */
-
-document.getElementById("todayDate").textContent =
-  new Date().toLocaleDateString("en-IN", {
-    weekday:"short",
-    day:"numeric",
-    month:"short",
-    year:"numeric"
-  });
-
-/* PHOTO PREVIEW AND COMPRESSION */
-
-let selectedPhoto = "";
-
-const photoInput = document.getElementById("galleryPhoto");
-const photoPreview = document.getElementById("photoPreview");
-
-photoInput.addEventListener("change", function() {
-  const file = this.files[0];
-
-  selectedPhoto = "";
-  photoPreview.innerHTML = "";
-  photoPreview.style.display = "none";
-
-  if(!file) return;
-
-  if(!file.type.startsWith("image/")) {
-    showToast("Please select a valid image.");
-    this.value = "";
-    return;
-  }
-
-  if(file.size > 10 * 1024 * 1024) {
-    showToast("Image must be smaller than 10 MB.");
-    this.value = "";
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = function(event) {
-    const image = new Image();
-
-    image.onload = function() {
-      const canvas = document.createElement("canvas");
-      const maxSize = 900;
-
-      let width = image.width;
-      let height = image.height;
-
-      if(width > height && width > maxSize) {
-        height = Math.round(height * maxSize / width);
-        width = maxSize;
-      } else if(height > maxSize) {
-        width = Math.round(width * maxSize / height);
-        height = maxSize;
-      }
-
-      canvas.width = width;
-      canvas.height = height;
-
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(image, 0, 0, width, height);
-
-      selectedPhoto = canvas.toDataURL("image/jpeg", 0.65);
-
-      photoPreview.style.display = "block";
-
-      const previewImage = document.createElement("img");
-      previewImage.src = selectedPhoto;
-      previewImage.alt = "Selected complaint photo";
-
-      const removeButton = document.createElement("button");
-      removeButton.type = "button";
-      removeButton.className = "remove-photo";
-      removeButton.textContent = "Remove Photo";
-
-      removeButton.onclick = function() {
-        selectedPhoto = "";
-        photoInput.value = "";
-        photoPreview.innerHTML = "";
-        photoPreview.style.display = "none";
-      };
-
-      photoPreview.append(previewImage, removeButton);
-    };
-
-    image.onerror = function() {
-      showToast("Unable to read this image.");
-      photoInput.value = "";
-    };
-
-    image.src = event.target.result;
-  };
-
-  reader.onerror = function() {
-    showToast("Unable to read this file.");
-    photoInput.value = "";
-  };
-
-  reader.readAsDataURL(file);
-});
-
-/* UPDATE DASHBOARD */
-
-function updateDashboard() {
-  const studentComplaints = getCurrentStudentComplaints();
-
-  document.getElementById("total").textContent =
-    studentComplaints.length;
-
-  document.getElementById("pending").textContent =
-    studentComplaints.filter(c => getStatus(c) === "Pending").length;
-
-  document.getElementById("inProgress").textContent =
-    studentComplaints.filter(c => getStatus(c) === "In Progress").length;
-
-  document.getElementById("resolved").textContent =
-    studentComplaints.filter(c => getStatus(c) === "Resolved").length;
-
-  const name = document.getElementById("student").value.trim();
-
-  document.getElementById("welcomeName").textContent =
-    name || "Student";
-
-  document.getElementById("profileLetter").textContent =
-    name ? name.charAt(0).toUpperCase() : "S";
-}
-
-/* STATUS BADGE */
-
-function getStatusClass(status) {
-  if(status === "Resolved") return "status-resolved";
-  if(status === "In Progress") return "status-progress";
-  return "status-pending";
-}
-
-/* RENDER COMPLAINTS */
-
-function renderComplaints() {
-  const list = document.getElementById("complaintList");
-  const studentComplaints = getCurrentStudentComplaints();
-
-  if(!document.getElementById("student").value.trim()) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📋</div>
-        <strong>Enter your name</strong>
-        Enter the same name used when submitting your complaints.
-      </div>`;
-    return;
-  }
-
-  const search = document.getElementById("searchInput")
-    .value.trim().toLowerCase();
-
-  const filter = document.getElementById("statusFilter").value;
-
-  const filtered = studentComplaints.filter(c => {
-    const status = getStatus(c);
-
-    const text = [
-      getStudentName(c),
-      c.category,
-      c.description,
-      c.hostel,
-      getRoom(c),
-      c.id
-    ].map(safeText).join(" ").toLowerCase();
-
-    return text.includes(search) &&
-      (filter === "All" || status === filter);
-  });
-
-  if(filtered.length === 0) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📭</div>
-        <strong>No complaints found</strong>
-        No complaints match your name or search.
-      </div>`;
-    return;
-  }
-
-  list.innerHTML = filtered.map(c => {
-    const status = getStatus(c);
-    const id = safeText(c.id || "HC-N/A");
-
-    return `
-      <div class="complaint-item">
-        <div class="complaint-main">
-
-          <div class="complaint-title">
-            <h4>${escapeHTML(c.category || "General Complaint")}</h4>
-            <span class="complaint-id">${escapeHTML(id)}</span>
-          </div>
-
-          <p class="complaint-description">
-            ${escapeHTML(c.description || "No description")}
-          </p>
-
-          <div class="complaint-meta">
-            <span>Student: ${escapeHTML(getStudentName(c) || "Not available")}</span>
-            <span>Room: ${escapeHTML(getRoom(c))}</span>
-            <span>${escapeHTML(c.hostel || "Hostel")}</span>
-            <span>${escapeHTML(c.date || "")}</span>
-          </div>
-
-        </div>
-
-        <div class="complaint-actions">
-          <span class="status-badge ${getStatusClass(status)}">
-            ${escapeHTML(status)}
-          </span>
-
-          <button class="details-btn"
-            type="button"
-            onclick="showDetails('${escapeHTML(id)}')">
-            View Details →
-          </button>
-        </div>
-      </div>`;
-  }).join("");
-}
-
-/* DETAILS MODAL */
-
-function showDetails(id) {
-  const complaint = getCurrentStudentComplaints().find(c =>
-    safeText(c.id || "HC-N/A") === id
-  );
-
-  if(!complaint) {
-    showToast("Complaint not found.");
-    return;
-  }
-
-  const status = getStatus(complaint);
-  const content = document.getElementById("modalContent");
-
-  content.innerHTML = `
-    <div class="detail-row">
-      <div class="detail-label">Complaint ID</div>
-      <div class="detail-value">${escapeHTML(complaint.id || "Not available")}</div>
-    </div>
-
-    <div class="detail-row">
-      <div class="detail-label">Student Name</div>
-      <div class="detail-value">${escapeHTML(getStudentName(complaint) || "Not available")}</div>
-    </div>
-
-    <div class="detail-row">
-      <div class="detail-label">Room Number</div>
-      <div class="detail-value">${escapeHTML(getRoom(complaint))}</div>
-    </div>
-
-    <div class="detail-row">
-      <div class="detail-label">Category</div>
-      <div class="detail-value">${escapeHTML(complaint.category || "")}</div>
-    </div>
-
-    <div class="detail-row">
-      <div class="detail-label">Hostel</div>
-      <div class="detail-value">${escapeHTML(complaint.hostel || "")}</div>
-    </div>
-
-    <div class="detail-row">
-      <div class="detail-label">Description</div>
-      <div class="detail-value">${escapeHTML(complaint.description || "")}</div>
-    </div>
-
-    <div class="detail-row">
-      <div class="detail-label">Date & Time</div>
-      <div class="detail-value">
-        ${escapeHTML(complaint.date || "")}
-        ${escapeHTML(complaint.time || "")}
-      </div>
-    </div>
-
-    <div class="detail-row">
-      <div class="detail-label">Current Status</div>
-      <div class="detail-value">
-        <span class="status-badge ${getStatusClass(status)}">
-          ${escapeHTML(status)}
-        </span>
-      </div>
-    </div>
-
-    ${complaint.photo ? `
-      <div class="detail-row">
-        <div class="detail-label">Attached Photo</div>
-        <img class="modal-photo"
-          src="${escapeHTML(complaint.photo)}"
-          alt="Complaint photo">
-      </div>` : ""}
-  `;
-
-  document.getElementById("detailsModal").classList.add("show");
-}
-
-function closeModal() {
-  document.getElementById("detailsModal").classList.remove("show");
-}
-
-function closeModalOutside(event) {
-  if(event.target.id === "detailsModal") {
-    closeModal();
-  }
-}
-
-/* SUBMIT COMPLAINT */
-
-document.getElementById("complaintForm")
-.addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  const student = document.getElementById("student").value.trim();
-  const room = document.getElementById("room").value.trim();
-  const category = document.getElementById("category").value;
-  const hostel = document.getElementById("hostel").value;
-  const description = document.getElementById("description").value.trim();
-
-  if(!student || !room || !category || !hostel || !description) {
-    showToast("Please fill all required fields.");
-    return;
-  }
-
-  // Save the current student's name
-  localStorage.setItem(STUDENT_NAME_KEY, student);
-
-  const submitBtn = document.getElementById("submitBtn");
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Submitting...";
-
-  const now = new Date();
-
-  const newComplaint = {
-    id: "HC-" + Date.now(),
-    name: student,
-    studentName: student,
-    room: room,
-    category: category,
-    hostel: hostel,
-    description: description,
-    date: now.toLocaleDateString("en-IN"),
-    time: now.toLocaleTimeString("en-IN"),
-    status: "Pending",
-    photo: selectedPhoto
-  };
-
-  complaints = getComplaints();
-  complaints.push(newComplaint);
-
-  const saved = saveComplaints();
-
-  submitBtn.disabled = false;
-  submitBtn.textContent = "Submit Complaint →";
-
-  if(!saved) return;
-
-  document.getElementById("searchInput").value = "";
-  document.getElementById("statusFilter").value = "All";
-
-  selectedPhoto = "";
-  photoInput.value = "";
-  photoPreview.innerHTML = "";
-  photoPreview.style.display = "none";
-
-  // Keep student name; clear only complaint fields
-  document.getElementById("room").value = "";
-  document.getElementById("category").value = "";
-  document.getElementById("hostel").value = "";
-  document.getElementById("description").value = "";
-
-  updateDashboard();
-  renderComplaints();
-
-  showToast("Complaint submitted successfully!");
-
-  document.getElementById("myComplaints").scrollIntoView({
-    behavior:"smooth",
-    block:"start"
-  });
-});
-
-/* REFRESH */
-
-function refreshDashboard() {
-  complaints = getComplaints();
-
-  // Restore saved student name if input is empty
-  const studentInput = document.getElementById("student");
-
-  if(!studentInput.value.trim()) {
-    studentInput.value =
-      localStorage.getItem(STUDENT_NAME_KEY) || "";
-  }
-
-  updateDashboard();
-  renderComplaints();
-
-  showToast("Dashboard refreshed.");
-}
-
-/* LIVE NAME FILTER AND SAVE */
-
-const studentInput = document.getElementById("student");
-
-// Restore name when page opens
-studentInput.value =
-  localStorage.getItem(STUDENT_NAME_KEY) || "";
-
-studentInput.addEventListener("input", function() {
-  localStorage.setItem(STUDENT_NAME_KEY, this.value.trim());
-  updateDashboard();
-  renderComplaints();
-});
-
-document.getElementById("searchInput")
-  .addEventListener("input", renderComplaints);
-
-document.getElementById("statusFilter")
-  .addEventListener("change", renderComplaints);
-
-/* UPDATE WHEN STORAGE CHANGES IN ANOTHER TAB */
-
-window.addEventListener("storage", function(event) {
-  if(event.key === STORAGE_KEY) {
-    complaints = getComplaints();
-    updateDashboard();
-    renderComplaints();
-  }
-});
-
-/* INITIAL LOAD */
-
-complaints = getComplaints();
-updateDashboard();
-renderComplaints();
-
-</script>
+  <!-- TOAST MESSAGE -->
+  <div id="toast" class="toast"></div>
 
 </body>
 </html>
-
