@@ -1,290 +1,668 @@
 
+/* =========================================
+   HOSTELCARE - SHARED JAVASCRIPT
+   Student Dashboard + Login
+========================================= */
+
+
+/* =========================================
+   1. COMMON STORAGE
+========================================= */
+
 let complaints = [];
 let selectedPhoto = "";
 
 const STORAGE_KEY = "hostelCareComplaints";
+const STUDENT_NAME_KEY = "hostelCareCurrentStudentName";
 
-const form = document.getElementById("complaintForm");
-const gallery = document.getElementById("galleryPhoto");
-const preview = document.getElementById("photoPreview");
 
-// Load saved complaints
-function loadComplaints() {
+function getComplaints() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     const data = saved ? JSON.parse(saved) : [];
 
-    complaints = Array.isArray(data) ? data : [];
+    return Array.isArray(data) ? data : [];
   } catch (error) {
-    complaints = [];
-    alert("Unable to load saved complaints. Please check browser storage.");
+    return [];
   }
 }
 
-// Save complaints
+
 function saveComplaints() {
   try {
-    // Photos are not stored to avoid filling browser storage.
-    const savedData = complaints.map(c => ({
-      ...c,
-      photo: ""
-    }));
-
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify(savedData)
+      JSON.stringify(complaints)
     );
 
     return true;
   } catch (error) {
-    alert("Could not save data. Please try again.");
+    showToast("Unable to save. Storage may be full.");
     return false;
   }
 }
 
-// Gallery photo selection
-function handlePhoto(file) {
-  if (!file) return;
 
-  if (!file.type.startsWith("image/")) {
-    alert("Please select an image!");
+function safeText(value) {
+  return String(value ?? "");
+}
+
+
+function escapeHTML(value) {
+  return safeText(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[char]);
+}
+
+
+function getStatus(complaint) {
+  const status = safeText(complaint.status).trim();
+
+  if (status.toLowerCase() === "resolved") {
+    return "Resolved";
+  }
+
+  if (status.toLowerCase() === "in progress") {
+    return "In Progress";
+  }
+
+  return "Pending";
+}
+
+
+function getStudentName(complaint) {
+  return safeText(
+    complaint.studentName || complaint.name || complaint.student
+  ).trim();
+}
+
+
+function getRoom(complaint) {
+  return safeText(
+    complaint.room || complaint.roomNumber
+  ).trim() || "Not available";
+}
+
+
+/* =========================================
+   2. TOAST MESSAGE
+========================================= */
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+
+  if (!toast) {
+    alert(message);
     return;
   }
 
-  if (file.size > 3 * 1024 * 1024) {
-    alert("Please select an image below 3 MB.");
-    return;
-  }
+  toast.textContent = message;
+  toast.classList.add("show");
 
-  const reader = new FileReader();
+  clearTimeout(window.hostelCareToastTimer);
 
-  reader.onload = function () {
-    selectedPhoto = reader.result;
-
-    if (!preview) return;
-
-    preview.innerHTML = "";
-
-    const img = document.createElement("img");
-    img.src = selectedPhoto;
-    img.alt = "Complaint photo";
-    img.style.width = "100%";
-    img.style.maxHeight = "250px";
-    img.style.objectFit = "contain";
-
-    preview.appendChild(img);
-  };
-
-  reader.onerror = function () {
-    alert("Unable to load photo.");
-  };
-
-  reader.readAsDataURL(file);
+  window.hostelCareToastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
 }
 
-if (gallery) {
-  gallery.addEventListener("change", function () {
-    handlePhoto(this.files[0]);
-  });
-}
 
-// Dashboard
-function updateDashboard() {
-  const total = document.getElementById("total");
-  const pending = document.getElementById("pending");
-  const inProgress = document.getElementById("inProgress");
-  const resolved = document.getElementById("resolved");
+/* =========================================
+   3. STUDENT DASHBOARD
+========================================= */
 
-  if (total) total.textContent = complaints.length;
+const complaintForm = document.getElementById("complaintForm");
 
-  if (pending) {
-    pending.textContent =
-      complaints.filter(c => c.status === "Pending").length;
-  }
+if (complaintForm) {
 
-  if (inProgress) {
-    inProgress.textContent =
-      complaints.filter(c => c.status === "In Progress").length;
-  }
+  const studentInput = document.getElementById("student");
+  const roomInput = document.getElementById("room");
+  const categoryInput = document.getElementById("category");
+  const hostelInput = document.getElementById("hostel");
+  const descriptionInput = document.getElementById("description");
 
-  if (resolved) {
-    resolved.textContent =
-      complaints.filter(c => c.status === "Resolved").length;
-  }
-}
+  const gallery = document.getElementById("galleryPhoto");
+  const preview = document.getElementById("photoPreview");
 
-// Display complaints
-function showComplaints() {
-  const list = document.getElementById("complaintList");
+  const searchInput = document.getElementById("searchInput");
+  const statusFilter = document.getElementById("statusFilter");
 
-  if (!list) return;
+  const submitBtn = document.getElementById("submitBtn");
 
-  list.innerHTML = "";
 
-  if (complaints.length === 0) {
-    list.textContent = "No complaints yet.";
-    return;
-  }
+  /* LOAD SAVED STUDENT NAME */
 
-  complaints.forEach(c => {
-    const card = document.createElement("div");
-    card.className = "complaint";
+  studentInput.value =
+    localStorage.getItem(STUDENT_NAME_KEY) || "";
 
-    const fields = [
-      ["h3", "Category: " + (c.category || "Complaint")],
-      ["p", "Complaint ID: " + (c.id || "")],
-      ["p", "Student: " + (c.name || "")],
-      ["p", "Room: " + (c.room || "")],
-      ["p", "Hostel: " + (c.hostel || "")],
-      ["p", "Problem: " + (c.description || "")],
-      ["p", "Date: " + (c.date || "")],
-      ["p", "Time: " + (c.time || "")],
-      ["p", "Status: " + (c.status || "Pending")]
-    ];
 
-    fields.forEach(([tag, value]) => {
-      const element = document.createElement(tag);
-      element.textContent = value;
+  /* TODAY DATE */
 
-      if (value === "Status: Pending") {
-        element.style.color = "#ffbd45";
-      } else if (value === "Status: Resolved") {
-        element.style.color = "#4ade80";
-      } else if (value === "Status: In Progress") {
-        element.style.color = "#60a5fa";
+  const todayDate = document.getElementById("todayDate");
+
+  if (todayDate) {
+    todayDate.textContent = new Date().toLocaleDateString(
+      "en-IN",
+      {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
       }
+    );
+  }
 
-      card.appendChild(element);
+
+  /* CURRENT STUDENT COMPLAINTS */
+
+  function getCurrentStudentComplaints() {
+    const name = studentInput.value.trim().toLowerCase();
+
+    if (!name) return [];
+
+    return complaints.filter(complaint => {
+      return getStudentName(complaint).toLowerCase() === name;
     });
+  }
 
-    if (c.photo) {
-      const img = document.createElement("img");
-      img.src = c.photo;
-      img.alt = "Complaint photo";
-      img.style.width = "100%";
-      img.style.maxHeight = "250px";
-      img.style.objectFit = "contain";
 
-      card.appendChild(img);
-    }
+  /* PHOTO UPLOAD */
 
-    list.appendChild(card);
-  });
-}
+  function handlePhoto(file) {
+    if (!file) return;
 
-// Submit complaint
-if (form) {
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const name = document.getElementById("student").value.trim();
-    const room = document.getElementById("room").value.trim();
-    const hostel = document.getElementById("hostel").value;
-    const category = document.getElementById("category").value;
-    const description = document.getElementById("description").value.trim();
-
-    if (!name || !room || !hostel || !category || !description) {
-      alert("Please fill all details!");
+    if (!file.type.startsWith("image/")) {
+      showToast("Please select a valid image.");
+      gallery.value = "";
       return;
     }
 
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("Please select an image below 10 MB.");
+      gallery.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function () {
+      const image = new Image();
+
+      image.onload = function () {
+        const canvas = document.createElement("canvas");
+
+        const maxSize = 900;
+
+        let width = image.width;
+        let height = image.height;
+
+        if (width > height && width > maxSize) {
+          height = Math.round(height * maxSize / width);
+          width = maxSize;
+        } else if (height > maxSize) {
+          width = Math.round(width * maxSize / height);
+          height = maxSize;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const context = canvas.getContext("2d");
+
+        context.drawImage(image, 0, 0, width, height);
+
+        selectedPhoto = canvas.toDataURL("image/jpeg", 0.65);
+
+        preview.innerHTML = "";
+
+        const img = document.createElement("img");
+
+        img.src = selectedPhoto;
+        img.alt = "Complaint photo";
+
+        preview.appendChild(img);
+        preview.style.display = "block";
+      };
+
+      image.onerror = function () {
+        showToast("Unable to process this image.");
+      };
+
+      image.src = reader.result;
+    };
+
+    reader.onerror = function () {
+      showToast("Unable to read the selected photo.");
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+
+  gallery.addEventListener("change", function () {
+    handlePhoto(this.files[0]);
+  });
+
+
+  /* UPDATE DASHBOARD */
+
+  function updateDashboard() {
+    const studentComplaints = getCurrentStudentComplaints();
+
+    document.getElementById("total").textContent =
+      studentComplaints.length;
+
+    document.getElementById("pending").textContent =
+      studentComplaints.filter(c => getStatus(c) === "Pending").length;
+
+    document.getElementById("inProgress").textContent =
+      studentComplaints.filter(c => getStatus(c) === "In Progress").length;
+
+    document.getElementById("resolved").textContent =
+      studentComplaints.filter(c => getStatus(c) === "Resolved").length;
+
+    const name = studentInput.value.trim();
+
+    document.getElementById("welcomeName").textContent =
+      name || "Student";
+
+    document.getElementById("profileLetter").textContent =
+      name ? name.charAt(0).toUpperCase() : "S";
+  }
+
+
+  /* STATUS BADGE */
+
+  function getStatusClass(status) {
+    if (status === "Resolved") return "status-resolved";
+    if (status === "In Progress") return "status-progress";
+
+    return "status-pending";
+  }
+
+
+  /* RENDER COMPLAINTS */
+
+  function renderComplaints() {
+    const list = document.getElementById("complaintList");
+    const studentComplaints = getCurrentStudentComplaints();
+
+    if (!studentInput.value.trim()) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <strong>Enter your name</strong>
+          Enter the same name used when submitting your complaints.
+        </div>`;
+      return;
+    }
+
+    const search = searchInput.value.trim().toLowerCase();
+    const filter = statusFilter.value;
+
+    const filtered = studentComplaints.filter(c => {
+      const status = getStatus(c);
+
+      const text = [
+        getStudentName(c),
+        c.category,
+        c.description,
+        c.hostel,
+        getRoom(c),
+        c.id
+      ].map(safeText).join(" ").toLowerCase();
+
+      return text.includes(search) &&
+        (filter === "All" || status === filter);
+    });
+
+    if (filtered.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <strong>No complaints found</strong>
+          No complaints match your name or search.
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(c => {
+      const status = getStatus(c);
+      const id = safeText(c.id || "HC-N/A");
+
+      return `
+        <div class="complaint-item">
+
+          <div class="complaint-main">
+
+            <div class="complaint-title">
+              <h4>${escapeHTML(c.category || "General Complaint")}</h4>
+              <span class="complaint-id">${escapeHTML(id)}</span>
+            </div>
+
+            <p class="complaint-description">
+              ${escapeHTML(c.description || "No description")}
+            </p>
+
+            <div class="complaint-meta">
+              <span>Student: ${escapeHTML(getStudentName(c) || "Not available")}</span>
+              <span>Room: ${escapeHTML(getRoom(c))}</span>
+              <span>${escapeHTML(c.hostel || "Hostel")}</span>
+              <span>${escapeHTML(c.date || "")}</span>
+            </div>
+
+          </div>
+
+          <div class="complaint-actions">
+
+            <span class="status-badge ${getStatusClass(status)}">
+              ${escapeHTML(status)}
+            </span>
+
+            <button
+              class="details-btn"
+              type="button"
+              onclick="showDetails('${escapeHTML(id)}')">
+              View Details →
+            </button>
+
+          </div>
+
+        </div>`;
+    }).join("");
+  }
+
+
+  /* DETAILS MODAL */
+
+  window.showDetails = function (id) {
+    const complaint = getCurrentStudentComplaints().find(c =>
+      safeText(c.id || "HC-N/A") === id
+    );
+
+    if (!complaint) {
+      showToast("Complaint not found.");
+      return;
+    }
+
+    const status = getStatus(complaint);
+    const content = document.getElementById("modalContent");
+
+    content.innerHTML = `
+      <div class="detail-row">
+        <div class="detail-label">Complaint ID</div>
+        <div class="detail-value">${escapeHTML(complaint.id || "Not available")}</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Student Name</div>
+        <div class="detail-value">${escapeHTML(getStudentName(complaint))}</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Room Number</div>
+        <div class="detail-value">${escapeHTML(getRoom(complaint))}</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Category</div>
+        <div class="detail-value">${escapeHTML(complaint.category || "")}</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Hostel</div>
+        <div class="detail-value">${escapeHTML(complaint.hostel || "")}</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Description</div>
+        <div class="detail-value">${escapeHTML(complaint.description || "")}</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Date & Time</div>
+        <div class="detail-value">
+          ${escapeHTML(complaint.date || "")}
+          ${escapeHTML(complaint.time || "")}
+        </div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Current Status</div>
+        <div class="detail-value">
+          <span class="status-badge ${getStatusClass(status)}">
+            ${escapeHTML(status)}
+          </span>
+        </div>
+      </div>
+
+      ${complaint.photo ? `
+        <div class="detail-row">
+          <div class="detail-label">Attached Photo</div>
+          <img class="modal-photo"
+            src="${escapeHTML(complaint.photo)}"
+            alt="Complaint photo">
+        </div>` : ""}
+    `;
+
+    document.getElementById("detailsModal").classList.add("show");
+  };
+
+
+  window.closeModal = function () {
+    document.getElementById("detailsModal").classList.remove("show");
+  };
+
+
+  window.closeModalOutside = function (event) {
+    if (event.target.id === "detailsModal") {
+      closeModal();
+    }
+  };
+
+
+  /* SUBMIT COMPLAINT */
+
+  complaintForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const student = studentInput.value.trim();
+    const room = roomInput.value.trim();
+    const category = categoryInput.value;
+    const hostel = hostelInput.value;
+    const description = descriptionInput.value.trim();
+
+    if (!student || !room || !category || !hostel || !description) {
+      showToast("Please fill all required fields.");
+      return;
+    }
+
+    localStorage.setItem(STUDENT_NAME_KEY, student);
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Submitting...";
+
     const now = new Date();
 
-    const complaint = {
-      id: "HC" + Date.now(),
-      name,
-      room,
-      hostel,
-      category,
-      description,
+    const newComplaint = {
+      id: "HC-" + Date.now(),
+      name: student,
+      studentName: student,
+      room: room,
+      category: category,
+      hostel: hostel,
+      description: description,
       date: now.toLocaleDateString("en-IN"),
       time: now.toLocaleTimeString("en-IN"),
       status: "Pending",
       photo: selectedPhoto
     };
 
-    complaints.unshift(complaint);
+    complaints = getComplaints();
+    complaints.push(newComplaint);
 
-    if (!saveComplaints()) {
-      complaints.shift();
-      return;
-    }
+    const saved = saveComplaints();
 
-    showComplaints();
-    updateDashboard();
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit Complaint →";
 
-    form.reset();
+    if (!saved) return;
+
+    searchInput.value = "";
+    statusFilter.value = "All";
+
     selectedPhoto = "";
+    gallery.value = "";
 
-    if (preview) {
-      preview.innerHTML = "";
+    preview.innerHTML = "";
+    preview.style.display = "none";
+
+    roomInput.value = "";
+    categoryInput.value = "";
+    hostelInput.value = "";
+    descriptionInput.value = "";
+
+    updateDashboard();
+    renderComplaints();
+
+    showToast("Complaint submitted successfully!");
+
+    document.getElementById("myComplaints").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
+
+
+  /* REFRESH DASHBOARD */
+
+  window.refreshDashboard = function () {
+    complaints = getComplaints();
+
+    if (!studentInput.value.trim()) {
+      studentInput.value =
+        localStorage.getItem(STUDENT_NAME_KEY) || "";
     }
 
-    alert("Complaint submitted successfully!");
-  });
-}
+    updateDashboard();
+    renderComplaints();
 
-// Initial loading
-loadComplaints();
-showComplaints();
-updateDashboard();
-      
+    showToast("Dashboard refreshed.");
+  };
+
+
+  /* LIVE NAME FILTER AND SAVE */
+
+  studentInput.addEventListener("input", function () {
+    localStorage.setItem(
+      STUDENT_NAME_KEY,
+      this.value.trim()
+    );
+
+    updateDashboard();
+    renderComplaints();
+  });
+
+
+  searchInput.addEventListener("input", renderComplaints);
+
+  statusFilter.addEventListener("change", renderComplaints);
+
+
+  /* UPDATE WHEN STORAGE CHANGES IN ANOTHER TAB */
+
+  window.addEventListener("storage", function (event) {
+    if (event.key === STORAGE_KEY) {
+      complaints = getComplaints();
+
+      updateDashboard();
+      renderComplaints();
+    }
+  });
+
+
+  /* INITIAL LOAD */
+
+  complaints = getComplaints();
+
+  updateDashboard();
+  renderComplaints();
+
+}
 
 
 /* =========================================
-   HOSTELCARE - LOGIN FUNCTIONALITY
+   4. LOGIN FUNCTIONALITY
 ========================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+const studentLoginBtn = document.getElementById("studentLoginBtn");
+const showWardenLoginBtn = document.getElementById("showWardenLoginBtn");
+const wardenLoginBtn = document.getElementById("wardenLoginBtn");
 
-  const studentLoginBtn = document.getElementById("studentLoginBtn");
-  const showWardenLoginBtn = document.getElementById("showWardenLoginBtn");
-  const wardenLoginBtn = document.getElementById("wardenLoginBtn");
+const wardenLoginArea = document.getElementById("wardenLoginArea");
+const passwordInput = document.getElementById("wardenPassword");
+const loginError = document.getElementById("loginError");
 
-  const wardenLoginArea = document.getElementById("wardenLoginArea");
-  const passwordInput = document.getElementById("wardenPassword");
-  const loginError = document.getElementById("loginError");
 
-  // Student Login
-  if (studentLoginBtn) {
-    studentLoginBtn.addEventListener("click", function () {
-      window.location.href = "student.html";
-    });
-  }
+/* STUDENT LOGIN */
 
-  // Show Warden Login
-  if (showWardenLoginBtn) {
-    showWardenLoginBtn.addEventListener("click", function () {
+if (studentLoginBtn) {
+  studentLoginBtn.addEventListener("click", function () {
+    window.location.href = "student.html";
+  });
+}
+
+
+/* SHOW WARDEN LOGIN */
+
+if (showWardenLoginBtn) {
+  showWardenLoginBtn.addEventListener("click", function () {
+    if (wardenLoginArea) {
       wardenLoginArea.hidden = false;
-      showWardenLoginBtn.hidden = true;
-      passwordInput.focus();
-    });
-  }
+    }
 
-  // Warden Login
-  function checkWardenLogin() {
-    const password = passwordInput.value;
+    showWardenLoginBtn.hidden = true;
 
-    // Prototype-only client-side check.
-    if (password === "Hostel@123") {
-      window.location.href = "warden.html";
-    } else {
-      loginError.textContent = "Incorrect password. Please try again.";
-      passwordInput.value = "";
+    if (passwordInput) {
       passwordInput.focus();
     }
-  }
+  });
+}
 
-  if (wardenLoginBtn) {
-    wardenLoginBtn.addEventListener("click", checkWardenLogin);
-  }
 
-  if (passwordInput) {
-    passwordInput.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        checkWardenLogin();
-      }
-    });
-  }
+/* WARDEN LOGIN */
 
-});
+function checkWardenLogin() {
+  if (!passwordInput || !loginError) return;
+
+  const password = passwordInput.value;
+
+  // Prototype-only client-side password check.
+  if (password === "Hostel@123") {
+    window.location.href = "warden.html";
+  } else {
+    loginError.textContent =
+      "Incorrect password. Please try again.";
+
+    passwordInput.value = "";
+    passwordInput.focus();
+  }
+}
+
+
+if (wardenLoginBtn) {
+  wardenLoginBtn.addEventListener("click", checkWardenLogin);
+}
+
+
+if (passwordInput) {
+  passwordInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      checkWardenLogin();
+    }
+  });
+}
+  
