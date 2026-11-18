@@ -229,3 +229,62 @@ loadComplaints();
 showComplaints();
 updateDashboard();
       
+
+
+/* =========================================
+   HOSTELCARE - LOGIN FUNCTIONALITY
+========================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const studentLoginBtn = document.getElementById("studentLoginBtn");
+  const showWardenLoginBtn = document.getElementById("showWardenLoginBtn");
+  const wardenLoginBtn = document.getElementById("wardenLoginBtn");
+
+  const wardenLoginArea = document.getElementById("wardenLoginArea");
+  const passwordInput = document.getElementById("wardenPassword");
+  const loginError = document.getElementById("loginError");
+
+  // Student Login
+  if (studentLoginBtn) {
+    studentLoginBtn.addEventListener("click", function () {
+      window.location.href = "student.html";
+    });
+  }
+
+  // Show Warden Login
+  if (showWardenLoginBtn) {
+    showWardenLoginBtn.addEventListener("click", function () {
+      wardenLoginArea.hidden = false;
+      showWardenLoginBtn.hidden = true;
+      passwordInput.focus();
+    });
+  }
+
+  // Warden Login
+  function checkWardenLogin() {
+    const password = passwordInput.value;
+
+    // Prototype-only client-side check.
+    if (password === "Hostel@123") {
+      window.location.href = "warden.html";
+    } else {
+      loginError.textContent = "Incorrect password. Please try again.";
+      passwordInput.value = "";
+      passwordInput.focus();
+    }
+  }
+
+  if (wardenLoginBtn) {
+    wardenLoginBtn.addEventListener("click", checkWardenLogin);
+  }
+
+  if (passwordInput) {
+    passwordInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        checkWardenLogin();
+      }
+    });
+  }
+
+});
