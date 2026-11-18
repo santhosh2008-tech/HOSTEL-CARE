@@ -666,3 +666,123 @@ if (passwordInput) {
   });
 }
   
+/* =========================================
+   HOSTELCARE - WARDEN DASHBOARD
+   SECTION 1: DATA + DASHBOARD COUNTS
+========================================= */
+
+(function () {
+
+    // Warden page check
+    const wardenPage = document.querySelector(".layout");
+
+    if (!wardenPage) return;
+
+    // Get complaints from shared storage
+    function wardenGetComplaints() {
+        try {
+            const saved = localStorage.getItem("hostelCareComplaints");
+            return saved ? JSON.parse(saved) : [];
+        } catch (error) {
+            console.error("Complaint loading error:", error);
+            return [];
+        }
+    }
+
+    // Save complaints
+    function wardenSaveComplaints(data) {
+        localStorage.setItem(
+            "hostelCareComplaints",
+            JSON.stringify(data)
+        );
+    }
+
+    // Get complaint status
+    function wardenGetStatus(complaint) {
+        const status = String(
+            complaint.status || "Pending"
+        ).toLowerCase().trim();
+
+        if (status === "resolved") return "Resolved";
+
+        if (
+            status === "in progress" ||
+            status === "in-progress"
+        ) {
+            return "In Progress";
+        }
+
+        return "Pending";
+    }
+
+    // Get student name
+    function wardenGetStudentName(complaint) {
+        return complaint.name ||
+               complaint.studentName ||
+               "Unknown Student";
+    }
+
+    // Get room number
+    function wardenGetRoom(complaint) {
+        return complaint.room ||
+               complaint.roomNo ||
+               "Not specified";
+    }
+
+    // Update dashboard counts
+    function updateDashboard() {
+
+        const complaints = wardenGetComplaints();
+
+        const total = complaints.length;
+
+        const pending = complaints.filter(
+            c => wardenGetStatus(c) === "Pending"
+        ).length;
+
+        const inProgress = complaints.filter(
+            c => wardenGetStatus(c) === "In Progress"
+        ).length;
+
+        const resolved = complaints.filter(
+            c => wardenGetStatus(c) === "Resolved"
+        ).length;
+
+        const totalElement =
+            document.getElementById("total");
+
+        const pendingElement =
+            document.getElementById("pending");
+
+        const progressElement =
+            document.getElementById("inProgress");
+
+        const resolvedElement =
+            document.getElementById("resolved");
+
+        if (totalElement)
+            totalElement.textContent = total;
+
+        if (pendingElement)
+            pendingElement.textContent = pending;
+
+        if (progressElement)
+            progressElement.textContent = inProgress;
+
+        if (resolvedElement)
+            resolvedElement.textContent = resolved;
+
+    }
+
+    // Make functions available to next sections
+    window.updateDashboard = updateDashboard;
+    window.wardenGetComplaints = wardenGetComplaints;
+    window.wardenSaveComplaints = wardenSaveComplaints;
+    window.wardenGetStatus = wardenGetStatus;
+    window.wardenGetStudentName = wardenGetStudentName;
+    window.wardenGetRoom = wardenGetRoom;
+
+    // Initial dashboard update
+    updateDashboard();
+
+})();
